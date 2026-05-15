@@ -1,0 +1,12 @@
+{
+  "name": "keeta-pay",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Keeta Pay - send KTA tokens to usernames instead of wallet addresses.",
+  "scripts": {
+    "format": "prettier --write \"{frontend,backend}/**/*.{ts,tsx,js,json,md,css}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  }
+}
