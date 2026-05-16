@@ -174,7 +174,7 @@ export default function LandingPage() {
 				<div className="grid gap-4 rounded-[16px] border border-white/10 bg-gradient-to-r from-white/[0.08] via-white/[0.03] to-transparent p-8 md:grid-cols-[1.2fr_0.8fr]">
 					<div>
 						<p className="text-xs uppercase tracking-[0.2em] text-white/45">Ready to ship</p>
-						<h2 className="font-display mt-4 text-3xl font-black md:text-4xl">Launch a wallet in minutes.</h2>
+						<h2 className="font-display mt-4 text-3xl font-black md:text-4xl">Launch a wallet in seconds.</h2>
 						<p className="mt-4 text-white/55">Sign in, claim a username, and start sending KTA instantly.</p>
 					</div>
 					<div className="flex items-center md:justify-end">
