@@ -52,16 +52,18 @@ export function LiveFeed({ compact = false, display }: { compact?: boolean; disp
 	const resolvedDisplay = useMemo(() => {
 		if (display?.length) return display;
 		if (items.length) {
-			return items.filter((tx) => !tx.isPrivate).map((tx) => ({
-				key: tx._id,
-				from: tx.fromUserId?.username ?? "user",
-				to: tx.toUserId?.username ?? shortAddress(tx.toWalletAddress),
-				amount: tx.amount,
-				message: tx.message || "sent KTA",
-				avatar: tx.fromUserId?.profileImage,
-				senderProof: tx.senderIdentityProof,
-				recipientProof: tx.recipientIdentityProof,
-			}));
+			return items
+				.filter((tx) => !tx.isPrivate)
+				.map((tx) => ({
+					key: tx._id,
+					from: tx.fromUserId?.username ?? "user",
+					to: tx.toUserId?.username ?? shortAddress(tx.toWalletAddress),
+					amount: tx.amount,
+					message: tx.message || "sent KTA",
+					avatar: tx.fromUserId?.profileImage,
+					senderProof: tx.senderIdentityProof,
+					recipientProof: tx.recipientIdentityProof,
+				}));
 		}
 		return fallback;
 	}, [display, items]);
@@ -76,7 +78,11 @@ export function LiveFeed({ compact = false, display }: { compact?: boolean; disp
 						<Avatar src={(item as any).avatar} username={item.from} size="sm" />
 						<p className="flex min-w-0 items-center gap-2 truncate text-sm text-white/82">
 							<UsernamePill username={item.from} proof={item.senderProof} /> <span>sent</span> <span className="font-semibold text-accent">{item.amount} KTA</span> <span>to</span>{" "}
-							{item.to.includes("...") ? <span className="rounded-full bg-sky/15 px-2 py-1 font-bold text-sky">{item.to}</span> : <UsernamePill username={item.to} proof={item.recipientProof} variant="sky" />}
+							{item.to.includes("...") ? (
+								<span className="rounded-full bg-sky/15 px-2 py-1 font-bold text-sky">{item.to}</span>
+							) : (
+								<UsernamePill username={item.to} proof={item.recipientProof} variant="sky" />
+							)}
 						</p>
 					</div>
 				))}

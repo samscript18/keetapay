@@ -187,8 +187,8 @@ export class IdentityService {
 
   private keetaNetwork() {
     const network = this.config.get<string>("KEETA_NETWORK") ?? "test";
-    if (["main", "staging", "test", "dev"].includes(network)) {
-      return network as "main" | "staging" | "test" | "dev";
+    if (["main", "test"].includes(network)) {
+      return network as "main" | "test";
     }
     return "test";
   }
