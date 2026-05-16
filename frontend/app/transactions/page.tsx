@@ -12,8 +12,7 @@ import { ActivityList } from "@/features/profile/activity-list";
 import { LiveFeed } from "@/features/feed/live-feed";
 import { api } from "@/lib/api";
 import { useAuthenticatedApi } from "@/hooks/use-authenticated-api";
-
-type TransactionFilter = "all" | "sent" | "received";
+import { TransactionFilter } from "@/types/api";
 
 export default function TransactionsPage() {
 	const router = useRouter();

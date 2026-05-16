@@ -30,8 +30,8 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 								<div className="mb-3 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
 									<WalletCards size={14} /> KeetaPay profile
 								</div>
-								<h1 className="truncate text-5xl font-black md:text-6xl mb-1">@{profileUsername}</h1>
-								<p className="mt-3 max-w-2xl text-sm leading-7 text-white/58">{user.bio}</p>
+								<h1 className="truncate text-5xl font-black md:text-6xl pt-1.5 pb-4">@{profileUsername}</h1>
+								<p className="max-w-2xl text-sm leading-7 text-white/58">{user.bio}</p>
 							</div>
 						</div>
 

@@ -8,13 +8,102 @@ import { Card } from "@/components/ui/card";
 import { LiveFeed } from "@/features/feed/live-feed";
 import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { api } from "@/lib/api";
+import { useEffect, useMemo, useState } from "react";
+import { api, ApiTransaction } from "@/lib/api";
 import { toast } from "sonner";
+import { ActivityCard } from "@/components/common/activity-card";
+
+const fallbackCreatedAt = "2026-05-16T12:00:00.000Z";
+
+const fallback: ApiTransaction[] = [
+	{
+		_id: "demo-lane-milo",
+		fromUserId: { id: "demo-lane", username: "lane", walletAddress: "demo-lane" },
+		toUserId: { id: "demo-milo", username: "milo", walletAddress: "demo-milo" },
+		amount: "12",
+		message: "studio snack fund",
+		txHash: "demo-lane-milo",
+		blockHash: "demo-lane-milo",
+		createdAt: fallbackCreatedAt,
+	},
+	{
+		_id: "demo-nora-kai",
+		fromUserId: { id: "demo-nora", username: "nora", walletAddress: "demo-nora" },
+		toUserId: { id: "demo-kai", username: "kai", walletAddress: "demo-kai" },
+		amount: "9",
+		message: "late-night render",
+		txHash: "demo-nora-kai",
+		blockHash: "demo-nora-kai",
+		createdAt: fallbackCreatedAt,
+	},
+	{
+		_id: "demo-june-faye",
+		fromUserId: { id: "demo-june", username: "june", walletAddress: "demo-june" },
+		toUserId: { id: "demo-faye", username: "faye", walletAddress: "demo-faye" },
+		amount: "40",
+		message: "studio rent",
+		txHash: "demo-june-faye",
+		blockHash: "demo-june-faye",
+		createdAt: fallbackCreatedAt,
+	},
+	{
+		_id: "demo-maya-rio",
+		fromUserId: { id: "demo-maya", username: "maya", walletAddress: "demo-maya" },
+		toUserId: { id: "demo-rio", username: "rio", walletAddress: "demo-rio" },
+		amount: "3",
+		message: "lunch run",
+		txHash: "demo-maya-rio",
+		blockHash: "demo-maya-rio",
+		createdAt: fallbackCreatedAt,
+	},
+];
 
 export default function LandingPage() {
 	const { login, ready, authenticated, getAccessToken } = usePrivy();
 	const router = useRouter();
+
+	const [items, setItems] = useState<ApiTransaction[]>([]);
+
+	useEffect(() => {
+		let mounted = true;
+		const load = async () => {
+			try {
+				const feed = await api.feed();
+				if (mounted) setItems(feed);
+			} catch {
+				if (mounted) setItems([]);
+			}
+		};
+		load();
+		const id = setInterval(load, 7000);
+		return () => {
+			mounted = false;
+			clearInterval(id);
+		};
+	}, []);
+
+	const display = useMemo(() => {
+		if (items.length) {
+			return items.map((tx) => ({
+				key: tx._id,
+				from: tx.fromUserId?.username ?? "user",
+				to: tx.toUserId?.username ?? "friend",
+				amount: tx.amount,
+				message: tx.message || "sent KTA",
+				avatar: tx.fromUserId?.profileImage,
+				blockHash: tx.blockHash,
+				createdAt: tx.createdAt,
+			}));
+		}
+		return fallback.map((tx) => ({
+			key: tx._id,
+			from: tx.fromUserId.username ?? "user",
+			to: tx.toUserId.username ?? "friend",
+			amount: tx.amount,
+			message: tx.message || "sent KTA",
+			avatar: tx.fromUserId.profileImage,
+		}));
+	}, [items]);
 
 	useEffect(() => {
 		if (!ready || !authenticated) return;
@@ -31,6 +120,9 @@ export default function LandingPage() {
 				});
 			});
 	}, [ready, authenticated, getAccessToken, router]);
+
+	const liveDrops = items.length ? items : fallback;
+	const verticalDrops = [...liveDrops, ...liveDrops];
 
 	return (
 		<main className="relative overflow-hidden">
@@ -110,7 +202,7 @@ export default function LandingPage() {
 					</div>
 				</div>
 			</section>
-			<LiveFeed compact />
+			<LiveFeed compact display={display} />
 			<section className="mx-auto max-w-7xl px-4 py-16">
 				<div className="grid gap-4 lg:grid-cols-3 lg:grid-rows-2">
 					<Card className="lg:row-span-2">
@@ -148,19 +240,36 @@ export default function LandingPage() {
 					</Card>
 				</div>
 			</section>
-			<section className="mx-auto grid max-w-7xl gap-8 px-4 py-14 md:grid-cols-2">
+			<section className="mx-auto grid max-w-7xl gap-8 px-4 py-14 lg:grid-cols-2">
 				<div>
 					<h2 className="font-display text-3xl font-black">How it works</h2>
 					<p className="mt-3 text-white/55">Login, claim a name, get a Keeta wallet, and pay socially.</p>
-					<div className="w-full rounded-[14px] border border-white/10 bg-white/[0.08] p-4 text-sm text-white/70 shadow-glow animate-pulse z-50 mt-11">
-						<p className="text-xs uppercase tracking-[0.2em] text-white/45">Live drop</p>
-						<p className="mt-3 text-lg font-bold">@lane paid @milo</p>
-						<p className="mt-1 text-2xl font-black text-accent">12 KTA</p>
-						<p className="mt-3 text-xs text-white/50">"studio snack fund"</p>
+					<div className="group relative z-50 mt-11 w-full h-[488px] overflow-hidden rounded-[14px] border border-white/10 bg-gradient-to-br from-white/[0.1] via-white/[0.055] to-accent/[0.08] p-4 text-sm text-white/70 shadow-glow backdrop-blur-xl">
+						<div aria-hidden className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
+						<div className="flex items-center justify-between">
+							<p className="text-xs uppercase tracking-[0.2em] text-white/45">Live drop</p>
+							<span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_18px_rgba(39,241,154,0.9)]" />
+						</div>
+						<div className="relative mt-4 h-auto overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_5%,black_82%,transparent)]">
+							<div className="animate-live-drop space-y-4 group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused]">
+								{verticalDrops.map((drop, index) => (
+									<ActivityCard key={`${drop._id}-${index}`} transaction={drop} />
+								))}
+							</div>
+						</div>
 					</div>
 				</div>
-				<div className="space-y-3">
-					{["Privy verifies your session", "Keeta Pay creates an encrypted Keeta wallet", "Usernames resolve to wallet addresses", "Transfers publish on Keeta testnet"].map((step, i) => (
+				<div className="space-y-5">
+					{[
+						"Secure login powered by Privy authentication",
+						"Instant creation of an encrypted Keeta wallet in the background",
+						"Sensitive Wallet keys are securely stored and never exposed to the user",
+						"Human-readable usernames replace complex wallet addresses",
+						"Users can search and select recipients instantly",
+						"Transfers are signed securely using the user’s encrypted wallet",
+						"Transactions are broadcast and processed on the Keeta testnet",
+						"Real-time confirmation updates ensure full transparency and trust",
+					].map((step, i) => (
 						<div key={step} className="flex items-center gap-3 rounded-[8px] border border-white/10 bg-white/[0.04] p-4">
 							<BadgeCheck className="text-accent" />
 							<span className="text-sm">
@@ -174,7 +283,7 @@ export default function LandingPage() {
 				<div className="grid gap-4 rounded-[16px] border border-white/10 bg-gradient-to-r from-white/[0.08] via-white/[0.03] to-transparent p-8 md:grid-cols-[1.2fr_0.8fr]">
 					<div>
 						<p className="text-xs uppercase tracking-[0.2em] text-white/45">Ready to ship</p>
-						<h2 className="font-display mt-4 text-3xl font-black md:text-4xl">Launch a wallet in seconds.</h2>
+						<h2 className="font-display mt-4 text-3xl font-black md:text-4xl">Launch your wallet in seconds.</h2>
 						<p className="mt-4 text-white/55">Sign in, claim a username, and start sending KTA instantly.</p>
 					</div>
 					<div className="flex items-center md:justify-end">

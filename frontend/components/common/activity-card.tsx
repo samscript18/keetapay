@@ -17,15 +17,17 @@ export function ActivityCard({ transaction, currentUsername }: { transaction: Ap
 			<div className="flex items-start gap-3">
 				<div className="relative shrink-0">
 					<Avatar username={sender?.username} src={incoming ? recipient?.profileImage : sender?.profileImage} size="sm" />
-					<span className="absolute -bottom-1 -right-1 grid h-5 w-5 place-items-center rounded-full border border-[#10141b] bg-[#18202a]">
-						<Icon size={12} className={accent} />
-					</span>
+					{currentUsername && (
+						<span className="absolute -bottom-1 -right-1 grid h-5 w-5 place-items-center rounded-full border border-[#10141b] bg-[#18202a]">
+							<Icon size={12} className={accent} />
+						</span>
+					)}
 				</div>
 
 				<div className="min-w-0 flex-1">
 					<div className="flex flex-wrap items-center gap-2 text-sm">
 						<UsernamePill username={sender?.username} />
-						<span className="text-white/42">paid</span>
+						<span className="text-white/42">sent</span>
 						<UsernamePill username={recipient?.username} variant="sky" />
 					</div>
 

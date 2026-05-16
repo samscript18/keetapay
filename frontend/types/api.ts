@@ -40,3 +40,5 @@ export type CreatePaymentRequestBody = {
   message?: string;
   expiresIn?: "15m" | "1h" | "24h" | "7d";
 };
+
+export type TransactionFilter = "all" | "sent" | "received";
