@@ -20,8 +20,8 @@ export function SendCard({
 	onSent,
 	lockedRecipient,
 	initialRecipientUsername,
-	initialAmount = "5",
-	initialMessage = "coffee",
+	initialAmount = "",
+	initialMessage = "",
 }: {
 	onSent?: () => void;
 	lockedRecipient?: SelectedUser;
@@ -37,8 +37,8 @@ export function SendCard({
 	const [amount, setAmount] = useState(initialAmount);
 	const [message, setMessage] = useState(initialMessage);
 	const [batchRows, setBatchRows] = useState<BatchPaymentRow[]>([
-		{ id: crypto.randomUUID(), amount: "5", message: "" },
-		{ id: crypto.randomUUID(), amount: "12", message: "" },
+		{ id: crypto.randomUUID(), amount: "", message: "" },
+		{ id: crypto.randomUUID(), amount: "", message: "" },
 	]);
 	const [success, setSuccess] = useState(false);
 	const appliedInitialRecipient = useRef<string | undefined>(undefined);

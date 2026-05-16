@@ -48,7 +48,7 @@ export default function LandingPage() {
 					</div>
 					<h1 className="font-display max-w-4xl text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
 						Send crypto like a message.
-						<span className="block bg-gradient-to-r from-accent via-sky to-coral bg-clip-text text-transparent">Instant, social, and human.</span>
+						<span className="block bg-gradient-to-r from-accent via-sky to-coral bg-clip-text text-transparent">Instant, secure, and easy-to-use.</span>
 					</h1>
 					<p className="mt-6 max-w-2xl text-lg leading-8 text-white/62">KeetaPay lets you move KTA with @usernames, clean notes, and a live social trail.</p>
 					<div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -85,10 +85,10 @@ export default function LandingPage() {
 						</div>
 						<div className="rounded-[8px] bg-black/30 p-4">
 							<p className="text-sm text-white/48">To</p>
-							<p className="mt-1 text-2xl font-bold">@emma</p>
+							<p className="mt-1 text-2xl font-bold">@jayden</p>
 							<p className="mt-5 text-sm text-white/48">Amount</p>
 							<p className="mt-1 text-4xl font-black text-accent">5 KTA</p>
-							<div className="mt-5 rounded-[8px] bg-white/8 p-3 text-sm text-white/70">coffee after demo day</div>
+							<div className="mt-5 rounded-[8px] bg-white/8 p-3 text-sm text-white/70">Sales payment</div>
 						</div>
 						<Button className="mt-5 w-full">Send in one tap</Button>
 					</Card>

@@ -20,8 +20,8 @@ import type { ApiPaymentRequest } from "@/types/api";
 
 export default function RequestsPage() {
   const { token } = useAuthenticatedApi();
-  const [amount, setAmount] = useState("25");
-  const [message, setMessage] = useState("settle up");
+  const [amount, setAmount] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
   const [expiresIn, setExpiresIn] = useState<"15m" | "1h" | "24h" | "7d">("1h");
   const [request, setRequest] = useState<ApiPaymentRequest | null>(null);
   const [filter, setFilter] = useState<"all" | "active" | "expired">("all");

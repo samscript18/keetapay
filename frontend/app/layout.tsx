@@ -7,7 +7,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "KeetaPay",
-  description: "Send KTA tokens to usernames instead of wallet addresses.",
+  description: "Send crypto like message. Instant, secure, and easy-to-use",
 };
 
 export default function RootLayout({

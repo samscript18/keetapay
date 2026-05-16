@@ -7,7 +7,7 @@ export function ActivityCard({ transaction, currentUsername }: { transaction: Ap
 	const sender = transaction.fromUserId;
 	const recipient = transaction.toUserId;
 	const incoming = currentUsername ? recipient?.username === currentUsername : false;
-	const accent = incoming ? "text-accent" : "text-sky";
+	const accent = incoming ? "text-accent" : "text-red-600";
 	const Icon = incoming ? ArrowDownLeft : ArrowUpRight;
 	const blockHash = transaction.blockHash ?? transaction.txHash;
 
@@ -16,7 +16,7 @@ export function ActivityCard({ transaction, currentUsername }: { transaction: Ap
 			<div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/45 to-transparent opacity-0 transition group-hover:opacity-100" />
 			<div className="flex items-start gap-3">
 				<div className="relative shrink-0">
-					<Avatar username={sender?.username} src={sender?.profileImage} size="sm" />
+					<Avatar username={sender?.username} src={incoming ? recipient?.profileImage : sender?.profileImage} size="sm" />
 					<span className="absolute -bottom-1 -right-1 grid h-5 w-5 place-items-center rounded-full border border-[#10141b] bg-[#18202a]">
 						<Icon size={12} className={accent} />
 					</span>

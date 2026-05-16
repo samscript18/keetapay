@@ -19,11 +19,11 @@ export default function SettingsPage() {
 	const { token } = useAuthenticatedApi();
 	const { authenticated, user: privyUser, linkEmail, linkGoogle, linkTwitter } = usePrivy();
 	const [user, setUser] = useState<ApiUser | null>(null);
-	const [originalUsername, setOriginalUsername] = useState("");
+	const [originalUsername, setOriginalUsername] = useState<string>("");
 	const [saving, setSaving] = useState(false);
-	const [uploadingAvatar, setUploadingAvatar] = useState(false);
+	const [uploadingAvatar, setUploadingAvatar] = useState<boolean>(false);
 	const [available, setAvailable] = useState<boolean | null>(null);
-	const [checkingUsername, setCheckingUsername] = useState(false);
+	const [checkingUsername, setCheckingUsername] = useState<boolean>(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -188,7 +188,7 @@ export default function SettingsPage() {
 								</div>
 								<div>
 									<h2 className="text-2xl font-black">Sign-in methods</h2>
-									<p className="text-sm text-white/48">Link email, Google, and X(coming soon) to the same KeetaPay account.</p>
+									<p className="text-sm text-white/48">Link email, Google, and X to the same KeetaPay account.</p>
 								</div>
 							</div>
 							<div className="grid gap-3">
@@ -221,7 +221,7 @@ export default function SettingsPage() {
 										linkTwitter();
 										toast.message("Redirecting to X");
 									}}
-									disabled
+									// disabled
 								/>
 							</div>
 							<p className="mt-4 rounded-[8px] bg-white/[0.04] p-3 text-sm leading-6 text-white/50">
