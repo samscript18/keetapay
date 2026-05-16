@@ -5,6 +5,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import { IdentityService } from "../identity/identity.service";
 import { WalletsService } from "../wallets/wallets.service";
 import { CreateProfileDto } from "./dto/create-profile.dto";
 import { UpdateProfileDto } from "./dto/update-profile.dto";
@@ -17,15 +18,20 @@ export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly walletsService: WalletsService,
+    private readonly identityService: IdentityService,
   ) {}
 
   async findOrBootstrap(privyUserId: string) {
-    const existing = await this.userModel.findOne({ privyUserId }).lean();
-    if (existing)
+    const existingQuery = this.userModel.findOne({ privyUserId });
+    existingQuery.select("+encryptedSeed");
+    const existing = await existingQuery.lean();
+    if (existing) {
+      await this.identityService.issueCertificate(existing.encryptedSeed, {});
       return {
-        user: this.publicUser(existing),
+        user: await this.publicUser(existing),
         needsUsername: !existing.username,
       };
+    }
 
     const wallet = await this.walletsService.createWallet();
     const created = await this.userModel.create({
@@ -33,8 +39,9 @@ export class UsersService {
       walletAddress: wallet.walletAddress,
       encryptedSeed: wallet.encryptedSeed,
     });
+    await this.identityService.issueCertificate(wallet.encryptedSeed, {});
 
-    return { user: this.publicUser(created.toObject()), needsUsername: true };
+    return { user: await this.publicUser(created.toObject()), needsUsername: true };
   }
 
   async createProfile(privyUserId: string, dto: CreateProfileDto) {
@@ -84,7 +91,7 @@ export class UsersService {
       .limit(Math.min(limit, 8))
       .lean();
 
-    return users.map((user) => this.publicUser(user));
+    return Promise.all(users.map((user) => this.publicUser(user)));
   }
 
   async findByUsernameOrThrow(username: string) {
@@ -112,9 +119,12 @@ export class UsersService {
     return this.publicUser(user);
   }
 
-  publicUser(
+  async publicUser(
     user: Partial<User> & { _id?: Types.ObjectId | string; createdAt?: Date },
   ) {
+    const identityProof = user.walletAddress
+      ? await this.identityService.certificateForWallet(user.walletAddress)
+      : undefined;
     return {
       id: String(user._id ?? ""),
       username: user.username,
@@ -122,6 +132,7 @@ export class UsersService {
       profileImage: user.profileImage,
       bio: user.bio,
       createdAt: user.createdAt,
+      identityProof,
     };
   }
 

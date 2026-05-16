@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { IdentityModule } from "../identity/identity.module";
 import { UsersModule } from "../users/users.module";
 import { WalletsModule } from "../wallets/wallets.module";
 import { Transaction, TransactionSchema } from "./schemas/transaction.schema";
@@ -16,6 +17,7 @@ import { PaymentsService } from "./payments.service";
       { name: Transaction.name, schema: TransactionSchema },
       { name: PaymentRequest.name, schema: PaymentRequestSchema },
     ]),
+    IdentityModule,
     UsersModule,
     WalletsModule,
   ],

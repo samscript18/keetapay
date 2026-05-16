@@ -5,6 +5,26 @@ export type ApiUser = {
   profileImage?: string;
   bio?: string;
   createdAt?: string;
+  identityProof?: ApiIdentityProof;
+};
+
+export type ApiIdentityAttributes = {
+  kycVerified?: boolean;
+  isMerchant?: boolean;
+  isHuman?: boolean;
+};
+
+export type ApiIdentityProof = {
+  walletAddress: string;
+  subjectPublicKey: string;
+  issuer: string;
+  certificateHash: string;
+  certificate?: unknown;
+  issuedAt?: string;
+  expiresAt?: string;
+  verified?: boolean;
+  verificationSource?: "keeta-sdk";
+  unsupportedReason?: string;
 };
 
 export type ApiTransaction = {
@@ -13,9 +33,14 @@ export type ApiTransaction = {
   message?: string;
   blockHash?: string;
   txHash: string;
+  isPrivate?: boolean;
+  network?: "main" | "private-subnet";
+  toWalletAddress?: string;
+  senderIdentityProof?: ApiIdentityProof;
+  recipientIdentityProof?: ApiIdentityProof;
   createdAt: string;
   fromUserId: ApiUser;
-  toUserId: ApiUser;
+  toUserId?: ApiUser;
 };
 
 export type ApiPaymentRequest = {
@@ -27,10 +52,18 @@ export type ApiPaymentRequest = {
   expiresAt: string;
   createdAt?: string;
   expired?: boolean;
+  recipientIdentityProof?: ApiIdentityProof;
 };
 
 export type SendPaymentBody = {
   recipient: string;
+  amount: string;
+  message?: string;
+  privateMode?: boolean;
+};
+
+export type WithdrawPaymentBody = {
+  walletAddress: string;
   amount: string;
   message?: string;
 };

@@ -1,4 +1,4 @@
-import { IsNumberString, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import { IsBoolean, IsNumberString, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
 export class SendPaymentDto {
   @IsString()
@@ -12,4 +12,8 @@ export class SendPaymentDto {
   @IsString()
   @MaxLength(120)
   message?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  privateMode?: boolean;
 }

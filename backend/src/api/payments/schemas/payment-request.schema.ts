@@ -19,6 +19,9 @@ export class PaymentRequest {
 
   @Prop({ required: true, index: true })
   expiresAt!: Date;
+
+  @Prop({ type: Object })
+  recipientIdentityProof?: Record<string, unknown>;
 }
 
 export const PaymentRequestSchema = SchemaFactory.createForClass(PaymentRequest);

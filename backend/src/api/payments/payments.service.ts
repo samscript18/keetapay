@@ -8,11 +8,13 @@ import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { randomBytes } from "crypto";
 import { Model, Types } from "mongoose";
+import { IdentityService } from "../identity/identity.service";
 import { UsersService } from "../users/users.service";
 import { WalletsService } from "../wallets/wallets.service";
 import { CreatePaymentRequestDto } from "./dto/create-payment-request.dto";
 import { SendPaymentDto } from "./dto/send-payment.dto";
 import { SendManyPaymentsDto } from "./dto/send-many-payments.dto";
+import { WithdrawPaymentDto } from "./dto/withdraw-payment.dto";
 import { PaymentRequest } from "./schemas/payment-request.schema";
 import { Transaction } from "./schemas/transaction.schema";
 
@@ -26,6 +28,7 @@ export class PaymentsService {
     private readonly requestModel: Model<PaymentRequest>,
     private readonly usersService: UsersService,
     private readonly walletsService: WalletsService,
+    private readonly identityService: IdentityService,
     private readonly config: ConfigService,
   ) {}
 
@@ -85,6 +88,9 @@ export class PaymentsService {
       amount: dto.amount,
       message: dto.message ?? "",
       expiresAt: this.expiresAt(dto.expiresIn ?? "1h"),
+      recipientIdentityProof: await this.identityService.certificateForWallet(
+        recipient.walletAddress,
+      ),
     });
 
     return this.hydratePaymentRequest(request.code);
@@ -108,6 +114,41 @@ export class PaymentsService {
     return requests.map((request) => this.withPaymentRequestStatus(request));
   }
 
+  async withdraw(privyUserId: string, dto: WithdrawPaymentDto) {
+    const sender =
+      await this.usersService.findRawByPrivyUserIdOrThrow(privyUserId);
+
+    if (!sender.username)
+      throw new BadRequestException(
+        "Choose a username before withdrawing KTA",
+      );
+
+    const blockHash = await this.transferOrThrow(
+      sender.encryptedSeed,
+      dto.walletAddress,
+      dto.amount,
+    );
+
+    const tx = await this.txModel.create({
+      fromUserId: sender._id,
+      toWalletAddress: dto.walletAddress,
+      amount: dto.amount,
+      message: dto.message ?? "",
+      blockHash,
+      txHash: blockHash,
+      isPrivate: false,
+      network: "main",
+      senderIdentityProof: await this.identityService.certificateForWallet(
+        sender.walletAddress,
+      ),
+    });
+
+    return {
+      transaction: await this.hydrateTransaction(tx._id),
+      explorerUrl: this.blockExplorerUrl(blockHash),
+    };
+  }
+
   private async sendOne(privyUserId: string, dto: SendPaymentDto) {
     const sender =
       await this.usersService.findRawByPrivyUserIdOrThrow(privyUserId);
@@ -122,63 +163,33 @@ export class PaymentsService {
     if (String(sender._id) === String(recipient._id))
       throw new BadRequestException("You cannot pay yourself");
 
-    let chain: { blockHash?: string; txHash?: string };
-    try {
-      chain = await this.walletsService.sendKta(
-        sender.encryptedSeed,
-        recipient.walletAddress,
-        dto.amount,
-      );
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "";
-      const code = this.errorCode(error);
-      this.logger.error(
-        `Keeta transfer failed${code ? ` (${code})` : ""}: ${message}`,
-        error instanceof Error ? error.stack : undefined,
-      );
-      if (message.includes("ASN1 data is malformed")) {
-        throw new BadRequestException(
-          "A Keeta representative returned an invalid vote. Please try again.",
-        );
-      }
-      if (
-        message.includes("existing vote for a successor") ||
-        message.includes("LEDGER_SUCCESSOR_VOTE_EXISTS")
-      ) {
-        throw new BadRequestException(
-          "This wallet has a pending Keeta vote. Please retry in a moment.",
-        );
-      }
-      if (
-        code === "LEDGER_INVALID_BALANCE" ||
-        message.includes("Resulting balance becomes negative")
-      ) {
-        throw new BadRequestException(
-          "Insufficient KTA balance for this transfer.",
-        );
-      }
-      throw new InternalServerErrorException(
-        "Keeta transfer failed. Please try again.",
-      );
-    }
-    const blockHash = chain.blockHash ?? chain.txHash;
-    if (!blockHash)
-      throw new InternalServerErrorException(
-        "Keeta transfer did not return a block hash",
-      );
+    const blockHash = await this.transferOrThrow(
+      sender.encryptedSeed,
+      recipient.walletAddress,
+      dto.amount,
+    );
 
     const tx = await this.txModel.create({
       fromUserId: sender._id,
       toUserId: recipient._id,
+      toWalletAddress: recipient.walletAddress,
       amount: dto.amount,
       message: dto.message ?? "",
       blockHash,
       txHash: blockHash,
+      isPrivate: Boolean(dto.privateMode),
+      network: dto.privateMode ? "private-subnet" : "main",
+      senderIdentityProof: await this.identityService.certificateForWallet(
+        sender.walletAddress,
+      ),
+      recipientIdentityProof: await this.identityService.certificateForWallet(
+        recipient.walletAddress,
+      ),
     });
 
     return {
       transaction: await this.hydrateTransaction(tx._id),
-      explorerUrl: this.blockExplorerUrl(blockHash),
+      explorerUrl: dto.privateMode ? undefined : this.blockExplorerUrl(blockHash),
     };
   }
 
@@ -197,7 +208,10 @@ export class PaymentsService {
   async publicHistory(username: string) {
     const user = await this.usersService.findByUsernameOrThrow(username);
     return this.txModel
-      .find({ $or: [{ fromUserId: user._id }, { toUserId: user._id }] })
+      .find({
+        isPrivate: { $ne: true },
+        $or: [{ fromUserId: user._id }, { toUserId: user._id }],
+      })
       .sort({ createdAt: -1 })
       .limit(30)
       .populate("fromUserId", "username profileImage")
@@ -207,7 +221,7 @@ export class PaymentsService {
 
   async liveFeed(limit = 30) {
     return this.txModel
-      .find()
+      .find({ isPrivate: { $ne: true } })
       .sort({ createdAt: -1 })
       .limit(limit)
       .populate("fromUserId", "username profileImage")
@@ -253,6 +267,59 @@ export class PaymentsService {
     return typeof error === "object" && error && "code" in error
       ? String((error as { code?: unknown }).code)
       : "";
+  }
+
+  private async transferOrThrow(
+    encryptedSeed: string,
+    walletAddress: string,
+    amount: string,
+  ) {
+    let chain: { blockHash?: string; txHash?: string };
+    try {
+      chain = await this.walletsService.sendKta(
+        encryptedSeed,
+        walletAddress,
+        amount,
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      const code = this.errorCode(error);
+      this.logger.error(
+        `Keeta transfer failed${code ? ` (${code})` : ""}: ${message}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      if (message.includes("ASN1 data is malformed")) {
+        throw new BadRequestException(
+          "A Keeta representative returned an invalid vote. Please try again.",
+        );
+      }
+      if (
+        message.includes("existing vote for a successor") ||
+        message.includes("LEDGER_SUCCESSOR_VOTE_EXISTS")
+      ) {
+        throw new BadRequestException(
+          "This wallet has a pending Keeta vote. Please retry in a moment.",
+        );
+      }
+      if (
+        code === "LEDGER_INVALID_BALANCE" ||
+        message.includes("Resulting balance becomes negative")
+      ) {
+        throw new BadRequestException(
+          "Insufficient KTA balance for this transfer.",
+        );
+      }
+      throw new InternalServerErrorException(
+        "Keeta transfer failed. Please try again.",
+      );
+    }
+
+    const blockHash = chain.blockHash ?? chain.txHash;
+    if (!blockHash)
+      throw new InternalServerErrorException(
+        "Keeta transfer did not return a block hash",
+      );
+    return blockHash;
   }
 
   private blockExplorerUrl(blockHash: string) {

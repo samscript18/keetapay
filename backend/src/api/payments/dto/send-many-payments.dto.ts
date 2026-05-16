@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsArray, IsNumberString, IsOptional, IsString, Matches, MaxLength, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsArray, IsBoolean, IsNumberString, IsOptional, IsString, Matches, MaxLength, ValidateNested } from 'class-validator';
 
 export class BatchPaymentItemDto {
   @IsString()
@@ -13,6 +13,10 @@ export class BatchPaymentItemDto {
   @IsString()
   @MaxLength(120)
   message?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  privateMode?: boolean;
 }
 
 export class SendManyPaymentsDto {

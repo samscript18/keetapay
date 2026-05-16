@@ -1,11 +1,13 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
 import type {
+  ApiIdentityProof,
   ApiPaymentRequest,
   ApiTransaction,
   ApiUser,
   CreatePaymentRequestBody,
   SendPaymentBody,
+  WithdrawPaymentBody,
 } from "@/types/api";
 
 export type { ApiPaymentRequest, ApiTransaction, ApiUser } from "@/types/api";
@@ -84,8 +86,14 @@ export const api = {
     request<ApiUser[]>(`/users/search?q=${encodeURIComponent(query)}`),
   publicUser: (username: string) => request<ApiUser>(`/users/${username}`),
   send: (token: string, body: SendPaymentBody, signal?: AbortSignal) =>
-    request<{ transaction: ApiTransaction; explorerUrl: string }>(
+    request<{ transaction: ApiTransaction; explorerUrl?: string }>(
       "/payments/send",
+      token,
+      { method: "POST", body: JSON.stringify(body), signal },
+    ),
+  withdraw: (token: string, body: WithdrawPaymentBody, signal?: AbortSignal) =>
+    request<{ transaction: ApiTransaction; explorerUrl: string }>(
+      "/payments/withdraw",
       token,
       { method: "POST", body: JSON.stringify(body), signal },
     ),
@@ -115,6 +123,23 @@ export const api = {
   publicHistory: (username: string) =>
     request<ApiTransaction[]>(`/transactions/user/${username}`),
   feed: () => request<ApiTransaction[]>("/feed/live?limit=40"),
+  verifyIdentityCertificate: (certificate: unknown) =>
+    request<ApiIdentityProof>("/identity/verify-certificate", undefined, {
+      method: "POST",
+      body: JSON.stringify(certificate),
+    }),
+  requestSelectiveDisclosure: () =>
+    request<{ unsupportedReason: string }>(
+      "/identity/request-selective-disclosure",
+      undefined,
+      { method: "POST" },
+    ),
+  verifyDisclosure: (disclosure: unknown) =>
+    request<{ valid: boolean; unsupportedReason?: string }>(
+      "/identity/verify-disclosure",
+      undefined,
+      { method: "POST", body: JSON.stringify(disclosure) },
+    ),
   balance: (token: string) =>
     request<{ balance: string; symbol: string }>("/wallet/balance", token),
 };

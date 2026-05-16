@@ -2,7 +2,7 @@
 
 KeetaPay is a modern peer-to-peer payment application built on the Keeta blockchain testnet for the Keeta Coding Challenge. It enables users to send KTA on Keeta testnet instantly and securely using simple usernames instead of long wallet addresses. Users can sign in, create a profile, make payment requests, send payments, and view recent activity, track transaction and history in a friendly dashboard.
 
-- SDK used: [`@keetanetwork/keetanet-client`](https://docs.keeta.com/introduction/start-developing)
+- SDK used: KeetaNet Client JavaScript/TypeScript SDK [`@keetanetwork/keetanet-client`](https://docs.keeta.com/introduction/start-developing)
 - Network: Keeta testnet
 - Tech stack: Node.js, NestJS, Next.js, TypeScript, Tailwind CSS, MongoDB, Privy Auth
 
@@ -14,7 +14,7 @@ KeetaPay is a modern peer-to-peer payment application built on the Keeta blockch
 ## Installation
 
 ```bash
-git clone https://github.com/your-username/keetapay.git
+git clone https://github.com/samscript18/keetapay.git
 cd keetapay
 npm install
 cd backend

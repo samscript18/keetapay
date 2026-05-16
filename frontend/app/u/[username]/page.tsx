@@ -1,5 +1,6 @@
 import { ArrowDownLeft, ArrowUpRight, CalendarDays, Copy, ExternalLink, WalletCards } from "lucide-react";
 import { Nav } from "@/components/shared/nav";
+import UsernamePill from "@/components/shared/username-pill";
 import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { ActivityList } from "@/features/profile/activity-list";
@@ -28,9 +29,11 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 							<Avatar src={user.profileImage} username={user.username} size="lg" />
 							<div className="min-w-0">
 								<div className="mb-3 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
-									<WalletCards size={14} /> KeetaPay profile
+									<WalletCards size={14} /> Assured payment profile
 								</div>
-								<h1 className="truncate text-5xl font-black md:text-6xl pt-1.5 pb-4">@{profileUsername}</h1>
+								<div className="pt-1.5 pb-4">
+									<UsernamePill username={profileUsername} proof={user.identityProof} size="lg" />
+								</div>
 								<p className="max-w-2xl text-sm leading-7 text-white/58">{user.bio}</p>
 							</div>
 						</div>
@@ -86,7 +89,7 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 						<div className="mb-5 flex items-center justify-between gap-4">
 							<div>
 								<h2 className="text-2xl font-black">Payment history</h2>
-								<p className="mt-1 text-sm text-white/45">Public KTA activity for @{profileUsername}</p>
+								<p className="mt-1 text-sm text-white/45">Wallet activity for @{profileUsername}</p>
 							</div>
 							<span className="rounded-full border border-white/10 px-3 py-1 text-xs font-bold text-white/46">{history.length} total</span>
 						</div>

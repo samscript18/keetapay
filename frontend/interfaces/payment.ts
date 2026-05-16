@@ -2,7 +2,7 @@ import type { ApiUser } from "@/types/api";
 
 export interface SelectedUser extends Pick<
   ApiUser,
-  "username" | "profileImage" | "walletAddress" | "id"
+  "username" | "profileImage" | "walletAddress" | "id" | "identityProof"
 > {}
 
 export interface BatchPaymentRow {

@@ -10,6 +10,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { api, ApiTransaction } from "@/lib/api";
+import { shortAddress } from "@/lib/utils";
 import { toast } from "sonner";
 import { ActivityCard } from "@/components/common/activity-card";
 
@@ -84,10 +85,10 @@ export default function LandingPage() {
 
 	const display = useMemo(() => {
 		if (items.length) {
-			return items.map((tx) => ({
+			return items.filter((tx) => !tx.isPrivate).map((tx) => ({
 				key: tx._id,
 				from: tx.fromUserId?.username ?? "user",
-				to: tx.toUserId?.username ?? "friend",
+				to: tx.toUserId?.username ?? shortAddress(tx.toWalletAddress),
 				amount: tx.amount,
 				message: tx.message || "sent KTA",
 				avatar: tx.fromUserId?.profileImage,
@@ -98,7 +99,7 @@ export default function LandingPage() {
 		return fallback.map((tx) => ({
 			key: tx._id,
 			from: tx.fromUserId.username ?? "user",
-			to: tx.toUserId.username ?? "friend",
+			to: tx.toUserId?.username ?? "friend",
 			amount: tx.amount,
 			message: tx.message || "sent KTA",
 			avatar: tx.fromUserId.profileImage,
@@ -247,7 +248,7 @@ export default function LandingPage() {
 					<div className="group relative z-50 mt-11 w-full h-[488px] overflow-hidden rounded-[14px] border border-white/10 bg-gradient-to-br from-white/[0.1] via-white/[0.055] to-accent/[0.08] p-4 text-sm text-white/70 shadow-glow backdrop-blur-xl">
 						<div aria-hidden className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
 						<div className="flex items-center justify-between">
-							<p className="text-xs uppercase tracking-[0.2em] text-white/45">Live drop</p>
+							<p className="text-xs uppercase tracking-[0.2em] text-white/45">Live Feed</p>
 							<span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_18px_rgba(39,241,154,0.9)]" />
 						</div>
 						<div className="relative mt-4 h-auto overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_5%,black_82%,transparent)]">

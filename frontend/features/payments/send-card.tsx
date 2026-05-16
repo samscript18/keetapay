@@ -3,9 +3,10 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { CheckCircle2, Plus, Send, X } from "lucide-react";
+import { CheckCircle2, Eye, Plus, Send, Shield, X } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar } from "@/components/ui/avatar";
+import UsernamePill from "@/components/shared/username-pill";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,7 @@ export function SendCard({
 	const [recipient, setRecipient] = useState<SelectedUser | undefined>(lockedRecipient);
 	const [amount, setAmount] = useState(initialAmount);
 	const [message, setMessage] = useState(initialMessage);
+	const [privateMode, setPrivateMode] = useState(false);
 	const [batchRows, setBatchRows] = useState<BatchPaymentRow[]>([
 		{ id: crypto.randomUUID(), amount: "", message: "" },
 		{ id: crypto.randomUUID(), amount: "", message: "" },
@@ -80,9 +82,10 @@ export function SendCard({
 	const mutation = useMutation({
 		mutationFn: async () => {
 			const controller = new AbortController();
+			const isPrivateSend = mode === "single" && privateMode;
 			paymentStatus.start(controller, "Initiating a secure KTA transfer.");
 			const authToken = await token();
-			paymentStatus.setStatus("processing", "Publishing your transfer to Keeta testnet.");
+			paymentStatus.setStatus("processing", isPrivateSend ? "Shielding this transfer from public activity and explorer references in the application layer." : "Publishing your transfer to Keeta testnet.");
 
 			if (mode === "batch") {
 				const payments = batchRows
@@ -102,10 +105,10 @@ export function SendCard({
 			}
 
 			if (!recipient?.username) throw new Error("Choose a recipient");
-			const result = await api.send(authToken, { recipient: `@${recipient.username}`, amount, message }, controller.signal);
+			const result = await api.send(authToken, { recipient: `@${recipient.username}`, amount, message, privateMode: isPrivateSend }, controller.signal);
 			return {
-				label: "KTA sent",
-				description: `Explorer: ${result.explorerUrl}`,
+				label: isPrivateSend ? "KTA sent" : "KTA sent",
+				description: isPrivateSend ? "Visible only inside KeetaPay for the sender and recipient." : `Explorer: ${result.explorerUrl}`,
 				result,
 			};
 		},
@@ -171,6 +174,37 @@ export function SendCard({
 						<UsernameSelector value={recipient} onChange={setRecipient} initialUsername={normalizedInitialRecipient} locked={Boolean(lockedRecipient)} />
 						<Input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" placeholder="Amount in KTA" />
 						<Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="What's it for?" />
+						<button
+							type="button"
+							aria-pressed={privateMode}
+							onClick={() => setPrivateMode((value) => !value)}
+							className={
+								privateMode
+									? "flex w-full items-center justify-between gap-3 rounded-[8px] border border-accent/30 bg-accent/10 p-3 text-left"
+									: "flex w-full items-center justify-between gap-3 rounded-[8px] border border-white/10 bg-white/[0.035] p-3 text-left hover:bg-white/[0.06]"
+							}
+						>
+							<span className="flex min-w-0 items-center gap-3">
+								<span
+									className={
+										privateMode
+											? "grid h-9 w-9 place-items-center rounded-[8px] bg-accent text-black"
+											: "grid h-9 w-9 place-items-center rounded-[8px] bg-white/10 text-white/64"
+									}
+								>
+									{privateMode ? <Shield size={17} /> : <Eye size={17} />}
+								</span>
+								<span className="min-w-0">
+									<span className="block text-sm font-bold text-white">Privacy mode</span>
+									<span className="block truncate text-xs text-white/45 text-wrap">
+										{privateMode ? "Private transactions are shielded on application layer." : "Public transactions are visible on application layer."}
+									</span>
+								</span>
+							</span>
+							<span className={privateMode ? "relative h-6 w-11 rounded-full bg-accent" : "relative h-6 w-11 rounded-full bg-white/16"}>
+								<span className={privateMode ? "absolute right-1 top-1 h-4 w-4 rounded-full bg-black" : "absolute left-1 top-1 h-4 w-4 rounded-full bg-white/70"} />
+							</span>
+						</button>
 					</>
 				)}
 
@@ -181,7 +215,7 @@ export function SendCard({
 
 			{success && (
 				<motion.div initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="mt-4 rounded-[8px] bg-accent/12 p-3 text-sm text-accent">
-					Payment confirmed and added to the live feed.
+					{mode === "single" && privateMode ? "Private payment confirmed inside KeetaPay." : "Payment confirmed and added to the live feed."}
 				</motion.div>
 			)}
 		</Card>
@@ -232,8 +266,7 @@ function UsernameSelector({ value, onChange, initialUsername, locked = false }: 
 				<div className="flex min-w-0 items-center gap-3">
 					<Avatar src={value.profileImage} username={value.username} size="sm" />
 					<div className="min-w-0">
-						<p className="truncate text-sm font-bold text-white">@{value.username}</p>
-						<p className="text-xs text-accent">Recipient resolved</p>
+						<UsernamePill username={value.username} proof={value.identityProof} />
 					</div>
 				</div>
 				{!locked && (

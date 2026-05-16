@@ -2,8 +2,9 @@
 
 import { Suspense, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { BadgeCheck, Clock3, Copy, ExternalLink, Sparkles, WalletCards } from "lucide-react";
+import { ArrowUpRight, BadgeCheck, Clock3, Copy, ExternalLink, Sparkles, WalletCards } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/shared/app-shell";
 import { Avatar } from "@/components/ui/avatar";
@@ -28,7 +29,7 @@ export default function DashboardPage() {
 function DashboardContent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
-  const initialRecipientUsername = searchParams.get("recipient");
+	const initialRecipientUsername = searchParams.get("recipient");
 	const { authenticated } = usePrivy();
 	const { token } = useAuthenticatedApi();
 	const dashboardQuery = useQuery({
@@ -114,6 +115,12 @@ function DashboardContent() {
 								<a className="mt-5 flex items-center gap-2 text-sm text-accent" href={`/u/${user?.username}`}>
 									View public profile <ExternalLink size={15} />
 								</a>
+								<Link
+									className="mt-6 flex h-11 items-center justify-center gap-2 rounded-[8px] border border-white/10 bg-white/[0.06] px-4 text-sm font-bold text-white hover:bg-white/10"
+									href="/withdraw"
+								>
+									Withdraw KTA <ArrowUpRight size={15} />
+								</Link>
 							</Card>
 						</aside>
 						<div className="col-span-full">

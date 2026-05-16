@@ -9,6 +9,7 @@ import { UsersService } from "../users/users.service";
 import { SendPaymentDto } from "./dto/send-payment.dto";
 import { CreatePaymentRequestDto } from "./dto/create-payment-request.dto";
 import { SendManyPaymentsDto } from "./dto/send-many-payments.dto";
+import { WithdrawPaymentDto } from "./dto/withdraw-payment.dto";
 import { PaymentsService } from "./payments.service";
 
 @Controller()
@@ -35,6 +36,15 @@ export class PaymentsController {
     @Body() dto: SendManyPaymentsDto,
   ) {
     return this.paymentsService.sendMany(user.privyUserId, dto);
+  }
+
+  @UseGuards(PrivyAuthGuard)
+  @Post("payments/withdraw")
+  async withdraw(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: WithdrawPaymentDto,
+  ) {
+    return this.paymentsService.withdraw(user.privyUserId, dto);
   }
 
   @UseGuards(PrivyAuthGuard)
