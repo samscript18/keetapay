@@ -15,13 +15,14 @@ type Display = {
 	message: string;
 	avatar: string | undefined;
 	senderProof?: ApiTransaction["senderIdentityProof"];
+	recipientProof?: ApiTransaction["recipientIdentityProof"];
 }[];
 
 const fallback = [
-	{ key: "demo-alex-emma", from: "alex", to: "emma", amount: "5", message: "coffee", avatar: undefined, senderProof: undefined },
-	{ key: "demo-sam-lisa", from: "sam", to: "lisa", amount: "12", message: "tickets", avatar: undefined, senderProof: undefined },
-	{ key: "demo-maya-rio", from: "maya", to: "rio", amount: "3", message: "lunch", avatar: undefined, senderProof: undefined },
-	{ key: "demo-nora-kai", from: "nora", to: "kai", amount: "9", message: "studio split", avatar: undefined, senderProof: undefined },
+	{ key: "demo-alex-emma", from: "alex", to: "emma", amount: "5", message: "coffee", avatar: undefined, senderProof: undefined, recipientProof: undefined },
+	{ key: "demo-sam-lisa", from: "sam", to: "lisa", amount: "12", message: "tickets", avatar: undefined, senderProof: undefined, recipientProof: undefined },
+	{ key: "demo-maya-rio", from: "maya", to: "rio", amount: "3", message: "lunch", avatar: undefined, senderProof: undefined, recipientProof: undefined },
+	{ key: "demo-nora-kai", from: "nora", to: "kai", amount: "9", message: "studio split", avatar: undefined, senderProof: undefined, recipientProof: undefined },
 ];
 
 export function LiveFeed({ compact = false, display }: { compact?: boolean; display?: Display }) {
@@ -59,6 +60,7 @@ export function LiveFeed({ compact = false, display }: { compact?: boolean; disp
 				message: tx.message || "sent KTA",
 				avatar: tx.fromUserId?.profileImage,
 				senderProof: tx.senderIdentityProof,
+				recipientProof: tx.recipientIdentityProof,
 			}));
 		}
 		return fallback;
@@ -74,7 +76,7 @@ export function LiveFeed({ compact = false, display }: { compact?: boolean; disp
 						<Avatar src={(item as any).avatar} username={item.from} size="sm" />
 						<p className="flex min-w-0 items-center gap-2 truncate text-sm text-white/82">
 							<UsernamePill username={item.from} proof={item.senderProof} /> <span>sent</span> <span className="font-semibold text-accent">{item.amount} KTA</span> <span>to</span>{" "}
-							{item.to.includes("...") ? <span className="rounded-full bg-sky/15 px-2 py-1 font-bold text-sky">{item.to}</span> : <UsernamePill username={item.to} variant="sky" />}
+							{item.to.includes("...") ? <span className="rounded-full bg-sky/15 px-2 py-1 font-bold text-sky">{item.to}</span> : <UsernamePill username={item.to} proof={item.recipientProof} variant="sky" />}
 						</p>
 					</div>
 				))}

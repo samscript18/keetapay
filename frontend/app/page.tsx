@@ -137,13 +137,13 @@ export default function LandingPage() {
 			<section className="mx-auto grid min-h-[calc(100vh-64px)] max-w-7xl items-center gap-12 px-4 py-14 lg:grid-cols-[1.05fr_.95fr]">
 				<motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
 					<div className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-						<Sparkles size={14} /> Keeta testnet payments
+						<Sparkles size={14} /> Verified Keeta payments
 					</div>
 					<h1 className="font-display max-w-4xl text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
-						Send crypto like a message.
-						<span className="block bg-gradient-to-r from-accent via-sky to-coral bg-clip-text text-transparent">Instant, secure, and easy-to-use.</span>
+						Send verified crypto payments.
+						<span className="block bg-gradient-to-r from-accent via-sky to-coral bg-clip-text text-transparent">Verified, instant, and easy.</span>
 					</h1>
-					<p className="mt-6 max-w-2xl text-lg leading-8 text-white/62">KeetaPay lets you move KTA with @usernames, clean notes, and a live social trail.</p>
+					<p className="mt-6 max-w-2xl text-lg leading-8 text-white/62">KeetaPay lets you move crypto with verified @usernames and SDK-backed identity checks.</p>
 					<div className="mt-8 flex flex-col gap-3 sm:flex-row">
 						<Button onClick={login}>
 							Get Started <ArrowRight size={18} />
@@ -158,7 +158,7 @@ export default function LandingPage() {
 							<p className="font-display mt-2 text-2xl font-black">2.4s</p>
 						</div>
 						<div className="rounded-[10px] border border-white/10 bg-white/[0.05] px-4 py-3">
-							<p className="text-xs uppercase tracking-[0.2em] text-white/45">Active profiles</p>
+							<p className="text-xs uppercase tracking-[0.2em] text-white/45">Verified profiles</p>
 							<p className="font-display mt-2 text-2xl font-black">1.3k</p>
 						</div>
 						<div className="rounded-[10px] border border-white/10 bg-white/[0.05] px-4 py-3">
@@ -195,11 +195,11 @@ export default function LandingPage() {
 					</div>
 					<div className="flex items-center gap-3">
 						<Globe2 className="text-accent" />
-						<span>Keeta testnet verified identities</span>
+						<span>SDK-verified payment identities</span>
 					</div>
 					<div className="flex items-center gap-3">
 						<ShieldCheck className="text-accent" />
-						<span>Privy-secured sessions only</span>
+						<span>SDK-backed identity checks</span>
 					</div>
 				</div>
 			</section>
@@ -209,10 +209,10 @@ export default function LandingPage() {
 					<Card className="lg:row-span-2">
 						<div className="flex items-center gap-3 text-accent">
 							<MessageCircle />
-							<p className="text-sm uppercase tracking-[0.2em]">Social transfer</p>
+							<p className="text-sm uppercase tracking-[0.2em]">Verified transfer</p>
 						</div>
-						<h3 className="font-display mt-4 text-2xl font-black">Send money like a DM</h3>
-						<p className="mt-4 text-sm leading-6 text-white/54">Search @username, add KTA, write a note, and tap send. The feed keeps the vibe alive.</p>
+						<h3 className="font-display mt-4 text-2xl font-black">Pay verified usernames fast</h3>
+						<p className="mt-4 text-sm leading-6 text-white/54">Search verified @usernames, add KTA, and tap send. The feed stays lively.</p>
 						<div className="mt-6 rounded-[10px] border border-white/10 bg-white/[0.06] p-4 text-sm text-white/70">
 							<p className="text-xs uppercase tracking-[0.2em] text-white/45">Now playing</p>
 							<p className="font-display mt-2 text-lg font-bold">"studio rent"</p>
@@ -221,30 +221,30 @@ export default function LandingPage() {
 					</Card>
 					<Card>
 						<Zap className="mb-5 text-accent" />
-						<h3 className="font-display text-xl font-bold">Keeta behind the scenes</h3>
-						<p className="mt-3 text-sm leading-6 text-white/54">Wallets and testnet transfers happen invisibly through the Keeta SDK.</p>
+						<h3 className="font-display text-xl font-bold">Keeta identity inside</h3>
+						<p className="mt-3 text-sm leading-6 text-white/54">Wallets, certificates, and transfers run through the Keeta SDK.</p>
 					</Card>
 					<Card>
 						<ShieldCheck className="mb-5 text-accent" />
-						<h3 className="font-display text-xl font-bold">Privy auth only</h3>
-						<p className="mt-3 text-sm leading-6 text-white/54">Email, Google, and Twitter/X sessions without embedded Privy wallets.</p>
+						<h3 className="font-display text-xl font-bold">Secure access only</h3>
+						<p className="mt-3 text-sm leading-6 text-white/54">Email, Google, and Twitter/X sessions with SDK identity checks.</p>
 					</Card>
 					<Card>
 						<BadgeCheck className="mb-5 text-accent" />
-						<h3 className="font-display text-xl font-bold">Instant identity sync</h3>
-						<p className="mt-3 text-sm leading-6 text-white/54">Names resolve to Keeta addresses with verified public signals.</p>
+						<h3 className="font-display text-xl font-bold">SDK identity checks</h3>
+						<p className="mt-3 text-sm leading-6 text-white/54">Usernames resolve to Keeta certificates with verified status.</p>
 					</Card>
 					<Card>
 						<Sparkles className="mb-5 text-accent" />
-						<h3 className="font-display text-xl font-bold">Design-led payments</h3>
-						<p className="mt-3 text-sm leading-6 text-white/54">Make every transfer feel like a tiny social moment, not a form.</p>
+						<h3 className="font-display text-xl font-bold">Trust-led payments</h3>
+						<p className="mt-3 text-sm leading-6 text-white/54">Make verified transfers feel social, polished, and simple.</p>
 					</Card>
 				</div>
 			</section>
 			<section className="mx-auto grid max-w-7xl gap-8 px-4 py-14 lg:grid-cols-2">
 				<div>
 					<h2 className="font-display text-3xl font-black">How it works</h2>
-					<p className="mt-3 text-white/55">Login, claim a name, get a Keeta wallet, and pay socially.</p>
+					<p className="mt-3 text-white/55">Login, verify identity, claim a wallet, and pay socially.</p>
 					<div className="group relative z-50 mt-11 w-full h-[488px] overflow-hidden rounded-[14px] border border-white/10 bg-gradient-to-br from-white/[0.1] via-white/[0.055] to-accent/[0.08] p-4 text-sm text-white/70 shadow-glow backdrop-blur-xl">
 						<div aria-hidden className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
 						<div className="flex items-center justify-between">
@@ -263,13 +263,13 @@ export default function LandingPage() {
 				<div className="space-y-5">
 					{[
 						"Secure login powered by Privy authentication",
-						"Instant creation of an encrypted Keeta wallet in the background",
+						"SDK certificate issued for every KeetaPay wallet",
 						"Sensitive Wallet keys are securely stored and never exposed to the user",
-						"Human-readable usernames replace complex wallet addresses",
+						"Verified usernames replace complex wallet addresses",
 						"Users can search and select recipients instantly",
 						"Transfers are signed securely using the user’s encrypted wallet",
 						"Transactions are broadcast and processed on the Keeta testnet",
-						"Real-time confirmation updates ensure full transparency and trust",
+						"SDK verification keeps profile trust transparent",
 					].map((step, i) => (
 						<div key={step} className="flex items-center gap-3 rounded-[8px] border border-white/10 bg-white/[0.04] p-4">
 							<BadgeCheck className="text-accent" />
@@ -284,8 +284,8 @@ export default function LandingPage() {
 				<div className="grid gap-4 rounded-[16px] border border-white/10 bg-gradient-to-r from-white/[0.08] via-white/[0.03] to-transparent p-8 md:grid-cols-[1.2fr_0.8fr]">
 					<div>
 						<p className="text-xs uppercase tracking-[0.2em] text-white/45">Ready to ship</p>
-						<h2 className="font-display mt-4 text-3xl font-black md:text-4xl">Launch your wallet in seconds.</h2>
-						<p className="mt-4 text-white/55">Sign in, claim a username, and start sending KTA instantly.</p>
+						<h2 className="font-display mt-4 text-3xl font-black md:text-4xl">Launch verified payments fast.</h2>
+						<p className="mt-4 text-white/55">Sign in, verify identity, and start sending KTA.</p>
 					</div>
 					<div className="flex items-center md:justify-end">
 						<Button onClick={login}>

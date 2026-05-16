@@ -40,7 +40,7 @@ export function ActivityCard({ transaction, currentUsername }: { transaction: Ap
 					<div className="flex flex-wrap items-center gap-2 text-sm">
 						<UsernamePill username={sender?.username} proof={transaction.senderIdentityProof} />
 						<span className="text-white/42">sent</span>
-						<UsernamePill username={recipientLabel} variant="sky" raw />
+						<UsernamePill username={recipientLabel} proof={transaction.recipientIdentityProof} variant="sky" raw />
 					</div>
 
 					<div className="mt-3 flex flex-wrap items-center gap-2">

@@ -29,7 +29,7 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 							<Avatar src={user.profileImage} username={user.username} size="lg" />
 							<div className="min-w-0">
 								<div className="mb-3 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
-									<WalletCards size={14} /> Assured payment profile
+									<WalletCards size={14} /> KeetPay profile
 								</div>
 								<div className="pt-1.5 pb-4">
 									<UsernamePill username={profileUsername} proof={user.identityProof} size="lg" />
