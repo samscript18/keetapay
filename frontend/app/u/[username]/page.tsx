@@ -11,8 +11,9 @@ export const dynamic = "force-dynamic";
 export default async function PublicProfile({ params }: { params: Promise<{ username: string }> }) {
 	const { username } = await params;
 	const [user, history] = await Promise.all([api.publicUser(username), api.publicHistory(username)]);
-	const sent = history.filter((tx) => tx.fromUserId?.username === user.username).length;
-	const received = history.filter((tx) => tx.toUserId?.username === user.username).length;
+	const profileUsername = user.username ?? username;
+	const sent = history.filter((tx) => tx.fromUserId?.username === profileUsername).length;
+	const received = history.filter((tx) => tx.toUserId?.username === profileUsername).length;
 	const totalVolume = history.reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
 
 	return (
@@ -29,7 +30,7 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 								<div className="mb-3 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
 									<WalletCards size={14} /> KeetaPay profile
 								</div>
-								<h1 className="truncate text-5xl font-black md:text-6xl mb-1">@{user.username}</h1>
+								<h1 className="truncate text-5xl font-black md:text-6xl mb-1">@{profileUsername}</h1>
 								<p className="mt-3 max-w-2xl text-sm leading-7 text-white/58">{user.bio}</p>
 							</div>
 						</div>
@@ -58,13 +59,13 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 
 				<div className="flex max-lg:flex-col justify-between items-center my-4 gap-4">
 					<Card className="w-full h-max">
-						<h2 className="text-lg font-bold">Pay @{user.username}</h2>
+						<h2 className="text-lg font-bold">Pay @{profileUsername}</h2>
 						<p className="mt-2 text-sm leading-6 text-white/52">
 							Start a secure transfer from your dashboard with this recipient already selected, making payments faster and more convenient. This recipient will already be filled in for you so
 							you can quickly make a seamless transfer from your dashboard without needing to enter their username or wallet address.
 						</p>
 						<a
-							href={`/dashboard?recipient=${user.username}`}
+							href={`/dashboard?recipient=${encodeURIComponent(profileUsername)}`}
 							className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-[8px] bg-accent px-4 text-sm font-black text-black hover:bg-accent/90"
 						>
 							Send KTA
@@ -73,7 +74,7 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 					<Card className="w-full">
 						<h2 className="text-lg font-bold">Trust signals</h2>
 						<div className="mt-4 space-y-3 text-sm">
-							<TrustRow label="Username" value={`@${user.username}`} />
+							<TrustRow label="Username" value={`@${profileUsername}`} />
 							<TrustRow label="Network" value="Keeta testnet" />
 							<TrustRow label="Address" value={shortAddress(user.walletAddress)} />
 						</div>
@@ -85,11 +86,11 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 						<div className="mb-5 flex items-center justify-between gap-4">
 							<div>
 								<h2 className="text-2xl font-black">Payment history</h2>
-								<p className="mt-1 text-sm text-white/45">Public KTA activity for @{user.username}</p>
+								<p className="mt-1 text-sm text-white/45">Public KTA activity for @{profileUsername}</p>
 							</div>
 							<span className="rounded-full border border-white/10 px-3 py-1 text-xs font-bold text-white/46">{history.length} total</span>
 						</div>
-						<ActivityList transactions={history} currentUsername={user.username} />
+						<ActivityList transactions={history} currentUsername={profileUsername} />
 					</Card>
 				</section>
 			</div>

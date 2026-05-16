@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BadgeCheck, Clock3, Copy, ExternalLink, Sparkles, WalletCards } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/shared/app-shell";
@@ -18,7 +18,17 @@ import { useAuthenticatedApi } from "@/hooks/use-authenticated-api";
 import { usePrivy } from "@privy-io/react-auth";
 
 export default function DashboardPage() {
+	return (
+		<Suspense fallback={<DashboardFallback />}>
+			<DashboardContent />
+		</Suspense>
+	);
+}
+
+function DashboardContent() {
 	const router = useRouter();
+	const searchParams = useSearchParams();
+  const initialRecipientUsername = searchParams.get("recipient");
 	const { authenticated } = usePrivy();
 	const { token } = useAuthenticatedApi();
 	const dashboardQuery = useQuery({
@@ -107,7 +117,7 @@ export default function DashboardPage() {
 							</Card>
 						</aside>
 						<div className="col-span-full">
-							<SendCard />
+							<SendCard initialRecipientUsername={initialRecipientUsername} />
 						</div>
 						<Card className="col-span-full">
 							<h2 className="mb-4 text-lg font-bold">Recent activity</h2>
@@ -115,6 +125,16 @@ export default function DashboardPage() {
 						</Card>
 					</>
 				)}
+			</div>
+		</AppShell>
+	);
+}
+
+function DashboardFallback() {
+	return (
+		<AppShell>
+			<div className="mx-auto grid max-w-7xl gap-4 px-4 py-6 lg:grid-cols-[1fr_380px]">
+				<DashboardSkeleton />
 			</div>
 		</AppShell>
 	);

@@ -188,7 +188,7 @@ export default function SettingsPage() {
 								</div>
 								<div>
 									<h2 className="text-2xl font-black">Sign-in methods</h2>
-									<p className="text-sm text-white/48">Link email, Google, and X to the same KeetaPay account.</p>
+									<p className="text-sm text-white/48">Link email, Google, and X(coming soon) to the same KeetaPay account.</p>
 								</div>
 							</div>
 							<div className="grid gap-3">
@@ -221,6 +221,7 @@ export default function SettingsPage() {
 										linkTwitter();
 										toast.message("Redirecting to X");
 									}}
+									disabled
 								/>
 							</div>
 							<p className="mt-4 rounded-[8px] bg-white/[0.04] p-3 text-sm leading-6 text-white/50">
@@ -234,7 +235,7 @@ export default function SettingsPage() {
 	);
 }
 
-function SignInMethod({ label, description, connected, icon: Icon, onLink }: { label: string; description: string; connected: boolean; icon: React.ElementType; onLink: () => void }) {
+function SignInMethod({ label, description, connected, icon: Icon, onLink, disabled = false }: { label: string; description: string; connected: boolean; icon: React.ElementType; onLink: () => void; disabled?: boolean }) {
 	return (
 		<div className="flex flex-col gap-3 rounded-[8px] border border-white/10 bg-white/[0.04] p-4 sm:flex-row sm:items-center sm:justify-between">
 			<div className="flex min-w-0 items-center gap-3">
@@ -249,8 +250,8 @@ function SignInMethod({ label, description, connected, icon: Icon, onLink }: { l
 					<p className="truncate text-sm text-white/45">{description}</p>
 				</div>
 			</div>
-			<Button type="button" variant={connected ? "secondary" : "primary"} onClick={onLink}>
-				{connected ? "Linked" : "Link"}
+			<Button type="button" variant={connected ? "secondary" : "primary"} onClick={onLink} disabled={disabled}>
+				{connected ? "Linked" : disabled ? "Coming soon" : "Link"}
 			</Button>
 		</div>
 	);
