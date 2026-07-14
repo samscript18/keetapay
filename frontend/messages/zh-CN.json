@@ -1,0 +1,12 @@
+{
+  "locale": { "label": "语言", "en": "English", "pt-BR": "Português", "zh-CN": "简体中文", "fr": "Français" },
+  "navigation": { "dashboard": "控制面板", "requests": "收款请求", "transactions": "交易", "history": "历史记录", "settings": "设置", "logout": "退出登录", "getStarted": "开始使用", "open": "打开导航", "close": "关闭导航" },
+  "session": { "returning": "正在返回登录页面…", "restoring": "正在恢复安全会话…" },
+  "payment": {
+    "title": "付款", "subtitle": "向用户名转账，或一次向多人付款。", "single": "发送", "batch": "批量", "chooseRecipient": "请选择收款人", "recipientNotFound": "未找到收款人", "recipientLoadFailed": "无法加载 @{username}。", "addRecipient": "请至少添加一位收款人", "initiating": "正在发起安全的 KTA 转账。", "processingPrivate": "正在应用层隐藏此转账的公开活动和浏览器引用。", "processingPublic": "正在将转账发布到 Keeta 测试网。", "amountPlaceholder": "KTA 金额", "notePlaceholder": "用途是什么？", "privacyMode": "隐私模式", "privateDescription": "私密交易在应用层受到保护。", "publicDescription": "公开交易在应用层可见。", "sending": "发送中…", "sendBatch": "批量发送", "sendKta": "发送 KTA", "batchSent": "批量付款已发送", "batchSubmitted": "已提交 {count} 笔 KTA 付款。", "sent": "KTA 已发送", "privateResult": "仅 KeetaPay 内的付款人和收款人可见。", "explorerResult": "区块浏览器：{url}", "sentSuccessfully": "付款发送成功。", "cancelled": "付款已取消", "failed": "付款失败", "tryAgain": "请重试", "privateConfirmed": "私密付款已在 KeetaPay 内确认。", "publicConfirmed": "付款已确认并添加到公开动态。"
+  },
+  "withdraw": {
+    "badge": "外部钱包", "title": "从 @{username} 提取", "description": "将 KTA 发送到 KeetaPay 之外的 Keeta 钱包地址。", "walletPlaceholder": "收款人的 Keeta 钱包地址", "amountPlaceholder": "KTA 金额", "notePlaceholder": "可选备注", "withdrawing": "提取中…", "action": "提取 KTA", "preparing": "正在准备外部 Keeta 提取。", "processing": "正在向收款人钱包地址发送 KTA。", "sent": "提取已成功发送。", "successTitle": "KTA 已提取", "successDescription": "将在 2 秒后返回控制面板。", "cancelled": "提取已取消", "failed": "提取失败", "tryAgain": "请重试"
+  },
+  "transferStatus": { "eyebrow": "转账状态", "closeLabel": "关闭付款状态", "initiating": "正在发起", "processing": "正在处理", "sent": "已发送", "cancelled": "已取消", "cancel": "取消", "close": "关闭" }
+}

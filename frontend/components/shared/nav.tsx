@@ -4,14 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
+import { useTranslations } from "next-intl";
 import {  LogOut, Menu, Settings, History, WalletCards, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 
 export function Nav() {
 	const { ready, authenticated, login, logout } = usePrivy();
 	const pathname = usePathname();
 	const router = useRouter();
 	const [mobileOpen, setMobileOpen] = useState(false);
+	const t = useTranslations("navigation");
 
 	return (
 		<header className="sticky top-0 z-40 border-b border-white/10 bg-background/72 backdrop-blur-xl">
@@ -32,34 +35,35 @@ export function Nav() {
 							<Button asChild variant={pathname === "/dashboard" ? "primary" : "ghost"}>
 								<Link href="/dashboard">
 									<WalletCards size={17} />
-									Dashboard
+									{t("dashboard")}
 								</Link>
 							</Button>
 							<Button asChild variant={pathname === "/transactions" ? "primary" : "ghost"}>
 								<Link href="/transactions">
 									<History size={17} />
-									Transactions
+									{t("transactions")}
 								</Link>
 							</Button>
 							<Button asChild variant="ghost">
 								<Link href="/settings">
 									<Settings size={17} />
-									Settings
+									{t("settings")}
 								</Link>
 							</Button>
 						</>
 					)}
 				</nav>
 				<div className="flex items-center gap-2">
+					<LocaleSwitcher compact />
 					{ready && authenticated ? (
 						<>
 							<Button variant="secondary" className="hidden md:inline-flex" onClick={() => logout().then(() => router.push("/"))}>
-								<LogOut size={17} /> Logout
+								<LogOut size={17} /> {t("logout")}
 							</Button>
 							<button
 								type="button"
 								className="inline-flex items-center justify-center rounded-[8px] border border-white/10 p-2 text-white/70 md:hidden"
-								aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+								aria-label={mobileOpen ? t("close") : t("open")}
 								onClick={() => setMobileOpen((open) => !open)}
 							>
 								{mobileOpen ? <X size={18} /> : <Menu size={18} />}
@@ -67,7 +71,7 @@ export function Nav() {
 						</>
 					) : (
 						<Button onClick={login} loading={!ready}>
-							Get Started
+							{t("getStarted")}
 						</Button>
 					)}
 				</div>
@@ -84,23 +88,23 @@ export function Nav() {
 						<Button asChild variant={pathname === "/dashboard" ? "primary" : "ghost"} onClick={() => setMobileOpen(false)}>
 							<Link href="/dashboard">
 								<WalletCards size={17} />
-								Dashboard
+								{t("dashboard")}
 							</Link>
 						</Button>
 						<Button asChild variant={pathname === "/transactions" ? "primary" : "ghost"} onClick={() => setMobileOpen(false)}>
 							<Link href="/transactions">
 								<History size={17} />
-								Transactions
+								{t("transactions")}
 							</Link>
 						</Button>
 						<Button asChild variant="ghost" onClick={() => setMobileOpen(false)}>
 							<Link href="/settings">
 								<Settings size={17} />
-								Settings
+								{t("settings")}
 							</Link>
 						</Button>
 						<Button variant="secondary" onClick={() => logout().then(() => router.push("/"))}>
-							<LogOut size={17} /> Logout
+							<LogOut size={17} /> {t("logout")}
 						</Button>
 					</div>
 				</div>

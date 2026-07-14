@@ -1,4 +1,39 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+const supportedLocales = new Set(["en", "pt-BR", "zh-CN", "fr"]);
+
+function selectedLocale() {
+  if (typeof document === "undefined") return "en";
+  const value = document.cookie
+    .split("; ")
+    .find((item) => item.startsWith("KEETAPAY_LOCALE="))
+    ?.slice("KEETAPAY_LOCALE=".length);
+
+  if (!value) return "en";
+  try {
+    const locale = decodeURIComponent(value);
+    return supportedLocales.has(locale) ? locale : "en";
+  } catch {
+    return "en";
+  }
+}
+
+async function localizeError(message: string, token?: string) {
+  const targetLanguage = selectedLocale();
+  if (!token || targetLanguage === "en") return message;
+  try {
+    const response = await fetch(`${API_URL}/localization/translate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ text: message, targetLanguage }),
+      cache: "no-store",
+    });
+    if (!response.ok) return message;
+    const payload = (await response.json()) as { translated?: string };
+    return payload.translated?.trim() || message;
+  } catch {
+    return message;
+  }
+}
 
 import type {
   ApiIdentityProof,
@@ -29,7 +64,8 @@ async function request<T>(
 
   if (!res.ok) {
     const payload = await res.json().catch(() => ({}));
-    throw new Error(payload.message ?? "Request failed");
+    const message = typeof payload.message === "string" ? payload.message : "Request failed";
+    throw new Error(await localizeError(message, token));
   }
   return res.json();
 }

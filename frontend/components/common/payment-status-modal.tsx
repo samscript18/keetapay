@@ -3,18 +3,19 @@
 import { Fragment } from "react";
 import { CheckCircle2, Loader2, OctagonAlert, Radio, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 import { usePaymentStatusStore } from "@/store/payment-status-store";
 import type { PaymentStatus } from "@/interfaces/payment";
 
-const steps: Array<{ key: PaymentStatus; label: string }> = [
-  { key: "initiating", label: "Initiating" },
-  { key: "processing", label: "Processing" },
-  { key: "sent", label: "Sent" },
-];
-
 export function PaymentStatusModal() {
+  const t = useTranslations("transferStatus");
   const { open, status, title, description, error, cancel, close } =
     usePaymentStatusStore();
+  const steps: Array<{ key: PaymentStatus; label: string }> = [
+    { key: "initiating", label: t("initiating") },
+    { key: "processing", label: t("processing") },
+    { key: "sent", label: t("sent") },
+  ];
 
   if (!open) return null;
 
@@ -28,7 +29,7 @@ export function PaymentStatusModal() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
-              Transfer status
+              {t("eyebrow")}
             </p>
             <h2 className="mt-2 text-2xl font-black">{title}</h2>
             <p className="mt-2 text-sm leading-6 text-white/55">
@@ -39,7 +40,7 @@ export function PaymentStatusModal() {
             type="button"
             onClick={close}
             className="grid h-9 w-9 place-items-center rounded-[8px] border border-white/10 text-white/60 hover:bg-white/10 hover:text-white"
-            aria-label="Close payment status"
+            aria-label={t("closeLabel")}
           >
             <X size={17} />
           </button>
@@ -67,7 +68,7 @@ export function PaymentStatusModal() {
           </div>
           {status === "cancelled" && (
             <div className="mt-5 rounded-[8px] border border-coral/25 bg-coral/10 p-3 text-center text-sm font-bold text-coral">
-              Cancelled
+              {t("cancelled")}
             </div>
           )}
         </div>
@@ -75,7 +76,7 @@ export function PaymentStatusModal() {
         <div className="mt-6 flex gap-3">
           {canCancel ? (
             <Button variant="secondary" className="w-full" onClick={cancel}>
-              Cancel
+              {t("cancel")}
             </Button>
           ) : (
             <Button
@@ -83,7 +84,7 @@ export function PaymentStatusModal() {
               className="w-full"
               onClick={close}
             >
-              Close
+              {t("close")}
             </Button>
           )}
         </div>

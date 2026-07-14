@@ -52,9 +52,6 @@ export function PrivyProviders({ children }: { children: React.ReactNode }) {
 				externalWallets: {
 					disableAllExternalWallets: true,
 				},
-				embeddedWallets: {
-					createOnLogin: "off",
-				},
 			}}
 		>
 			{children}

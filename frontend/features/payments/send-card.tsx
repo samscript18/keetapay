@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { CheckCircle2, Eye, Plus, Send, Shield, X } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Avatar } from "@/components/ui/avatar";
 import UsernamePill from "@/components/shared/username-pill";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ export function SendCard({
 	const { token } = useAuthenticatedApi();
 	const queryClient = useQueryClient();
 	const paymentStatus = usePaymentStatusStore();
+	const t = useTranslations("payment");
 	const [mode, setMode] = useState<"single" | "batch">("single");
 	const [recipient, setRecipient] = useState<SelectedUser | undefined>(lockedRecipient);
 	const [amount, setAmount] = useState(initialAmount);
@@ -68,8 +70,8 @@ export function SendCard({
 			})
 			.catch(() => {
 				if (!cancelled) {
-					toast.error("Recipient not found", {
-						description: `@${normalizedInitialRecipient} could not be loaded.`,
+					toast.error(t("recipientNotFound"), {
+						description: t("recipientLoadFailed", { username: normalizedInitialRecipient }),
 					});
 				}
 			});
@@ -77,15 +79,15 @@ export function SendCard({
 		return () => {
 			cancelled = true;
 		};
-	}, [lockedRecipient, normalizedInitialRecipient]);
+	}, [lockedRecipient, normalizedInitialRecipient, t]);
 
 	const mutation = useMutation({
 		mutationFn: async () => {
 			const controller = new AbortController();
 			const isPrivateSend = mode === "single" && privateMode;
-			paymentStatus.start(controller, "Initiating a secure KTA transfer.");
+			paymentStatus.start(controller, t("initiating"));
 			const authToken = await token();
-			paymentStatus.setStatus("processing", isPrivateSend ? "Shielding this transfer from public activity and explorer references in the application layer." : "Publishing your transfer to Keeta testnet.");
+			paymentStatus.setStatus("processing", isPrivateSend ? t("processingPrivate") : t("processingPublic"));
 
 			if (mode === "batch") {
 				const payments = batchRows
@@ -95,26 +97,26 @@ export function SendCard({
 						amount: row.amount,
 						message: row.message,
 					}));
-				if (!payments.length) throw new Error("Add at least one recipient");
+				if (!payments.length) throw new Error(t("addRecipient"));
 				const result = await api.sendMany(authToken, { payments }, controller.signal);
 				return {
-					label: "Batch sent",
-					description: `${payments.length} KTA payments were submitted.`,
+					label: t("batchSent"),
+					description: t("batchSubmitted", { count: payments.length }),
 					result,
 				};
 			}
 
-			if (!recipient?.username) throw new Error("Choose a recipient");
+			if (!recipient?.username) throw new Error(t("chooseRecipient"));
 			const result = await api.send(authToken, { recipient: `@${recipient.username}`, amount, message, privateMode: isPrivateSend }, controller.signal);
 			return {
-				label: isPrivateSend ? "KTA sent" : "KTA sent",
-				description: isPrivateSend ? "Visible only inside KeetaPay for the sender and recipient." : `Explorer: ${result.explorerUrl}`,
+				label: t("sent"),
+				description: isPrivateSend ? t("privateResult") : t("explorerResult", { url: result.explorerUrl ?? "" }),
 				result,
 			};
 		},
 		onSuccess: async (data) => {
 			setSuccess(true);
-			paymentStatus.setStatus("sent", "Payment sent successfully.");
+			paymentStatus.setStatus("sent", t("sentSuccessfully"));
 			toast.success(data.label, { description: data.description });
 			await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
 			await queryClient.invalidateQueries({ queryKey: ["transactions"] });
@@ -123,12 +125,12 @@ export function SendCard({
 		},
 		onError: (error) => {
 			if (error instanceof DOMException && error.name === "AbortError") {
-				toast.message("Payment cancelled");
+				toast.message(t("cancelled"));
 				return;
 			}
-			const message = error instanceof Error ? error.message : "Try again";
+			const message = error instanceof Error ? error.message : t("tryAgain");
 			paymentStatus.fail(message);
-			toast.error("Payment failed", { description: message });
+			toast.error(t("failed"), { description: message });
 		},
 	});
 
@@ -142,8 +144,8 @@ export function SendCard({
 		<Card>
 			<div className="mb-5 flex items-start justify-between gap-4">
 				<div>
-					<h2 className="text-lg font-bold">Payments</h2>
-					<p className="text-sm text-white/48">Send to a username or pay many people at once.</p>
+						<h2 className="text-lg font-bold">{t("title")}</h2>
+						<p className="text-sm text-white/48">{t("subtitle")}</p>
 				</div>
 				{success ? <CheckCircle2 className="text-accent" /> : <Send className="text-white/54" />}
 			</div>
@@ -151,8 +153,8 @@ export function SendCard({
 			{!lockedRecipient && (
 				<div className="mb-4 flex items-center justify-between rounded-[8px] border border-white/10 bg-white/[0.04] p-1">
 					{[
-						["single", "Send"],
-						["batch", "Batch"],
+							["single", t("single")],
+							["batch", t("batch")],
 					].map(([key, label]) => (
 						<button
 							key={key}
@@ -172,8 +174,8 @@ export function SendCard({
 				) : (
 					<>
 						<UsernameSelector value={recipient} onChange={setRecipient} initialUsername={normalizedInitialRecipient} locked={Boolean(lockedRecipient)} />
-						<Input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" placeholder="Amount in KTA" />
-						<Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="What's it for?" />
+							<Input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" placeholder={t("amountPlaceholder")} />
+							<Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder={t("notePlaceholder")} />
 						<button
 							type="button"
 							aria-pressed={privateMode}
@@ -195,9 +197,9 @@ export function SendCard({
 									{privateMode ? <Shield size={17} /> : <Eye size={17} />}
 								</span>
 								<span className="min-w-0">
-									<span className="block text-sm font-bold text-white">Privacy mode</span>
+										<span className="block text-sm font-bold text-white">{t("privacyMode")}</span>
 									<span className="block truncate text-xs text-white/45 text-wrap">
-										{privateMode ? "Private transactions are shielded on application layer." : "Public transactions are visible on application layer."}
+											{privateMode ? t("privateDescription") : t("publicDescription")}
 									</span>
 								</span>
 							</span>
@@ -209,13 +211,13 @@ export function SendCard({
 				)}
 
 				<Button className="w-full" loading={mutation.isPending} disabled={mode === "single" && !canSendSingle}>
-					{mutation.isPending ? "Sending..." : mode === "batch" ? "Send batch" : "Send KTA"}
+					{mutation.isPending ? t("sending") : mode === "batch" ? t("sendBatch") : t("sendKta")}
 				</Button>
 			</form>
 
 			{success && (
 				<motion.div initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="mt-4 rounded-[8px] bg-accent/12 p-3 text-sm text-accent">
-					{mode === "single" && privateMode ? "Private payment confirmed inside KeetaPay." : "Payment confirmed and added to the live feed."}
+					{mode === "single" && privateMode ? t("privateConfirmed") : t("publicConfirmed")}
 				</motion.div>
 			)}
 		</Card>
