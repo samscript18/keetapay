@@ -12,8 +12,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SendCard } from "@/features/payments/send-card";
 import { api } from "@/lib/api";
 import { useAuthenticatedApi } from "@/hooks/use-authenticated-api";
+import { useTranslations } from "next-intl";
 
 export default function PaymentLinkPage() {
+  const t = useTranslations("paymentLink");
   const params = useParams<{ code: string }>();
   const router = useRouter();
   const { ready, authenticated, login } = usePrivy();
@@ -65,12 +67,12 @@ export default function PaymentLinkPage() {
     return (
       <main className="grid min-h-screen place-items-center px-4">
         <Card className="w-full max-w-lg text-center">
-          <h1 className="text-3xl font-black">Payment link expired</h1>
+          <h1 className="text-3xl font-black">{t("expiredTitle")}</h1>
           <p className="mt-3 text-sm leading-6 text-white/52">
-            Ask the recipient to generate a new Keeta Pay link.
+            {t("expiredDescription")}
           </p>
           <Button className="mt-6" onClick={() => router.push("/")}>
-            Back home
+            {t("backHome")}
           </Button>
         </Card>
       </main>
@@ -78,6 +80,7 @@ export default function PaymentLinkPage() {
   }
 
   const recipient = request.recipientUserId;
+  const recipientUsername = recipient.username ?? "user";
 
   return (
     <main className="mx-auto grid min-h-screen max-w-5xl items-center gap-4 px-4 py-8 lg:grid-cols-[.85fr_1fr]">
@@ -87,14 +90,14 @@ export default function PaymentLinkPage() {
           username={recipient.username}
           size="lg"
         />
-        <h1 className="mt-5 text-4xl font-black">Pay @{recipient.username}</h1>
+        <h1 className="mt-5 text-4xl font-black">{t("pay", { username: recipientUsername })}</h1>
         <p className="mt-3 text-sm leading-6 text-white/54">
           {request.message ||
             recipient.bio ||
-            "Complete this Keeta Pay request."}
+            t("defaultMessage")}
         </p>
         <div className="mt-6 rounded-[8px] border border-accent/20 bg-accent/10 p-4">
-          <p className="text-sm text-accent">Requested amount</p>
+          <p className="text-sm text-accent">{t("requestedAmount")}</p>
           <p className="mt-1 text-4xl font-black">{request.amount} KTA</p>
         </div>
       </Card>
@@ -110,13 +113,12 @@ export default function PaymentLinkPage() {
         />
       ) : (
         <Card>
-          <h2 className="text-2xl font-black">Sign in to pay</h2>
+          <h2 className="text-2xl font-black">{t("signInTitle")}</h2>
           <p className="mt-3 text-sm leading-6 text-white/52">
-            Privy verifies your session. Keeta Pay sends the KTA transfer from
-            your Keeta wallet.
+            {t("signInDescription")}
           </p>
           <Button className="mt-6 w-full" onClick={login} loading={!ready}>
-            Continue with Privy
+            {t("continuePrivy")}
           </Button>
         </Card>
       )}

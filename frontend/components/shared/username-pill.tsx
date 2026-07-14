@@ -1,5 +1,6 @@
 import { BadgeCheck } from "lucide-react";
 import type { ApiIdentityProof } from "@/types/api";
+import { useTranslations } from "next-intl";
 
 function UsernamePill({
 	username,
@@ -14,14 +15,15 @@ function UsernamePill({
 	raw?: boolean;
 	size?: "sm" | "lg";
 }) {
-	const label = username ?? "unknown";
+	const t = useTranslations("identity");
+	const label = username ?? t("unknown");
 	const verified = proof?.verificationSource === "keeta-sdk" && Boolean(proof.verified);
 	const tone = variant === "accent" ? "bg-accent/15 text-accent" : "bg-sky/15 text-sky";
 	const sizing = size === "lg" ? "gap-2 px-3 py-1.5 text-xl md:text-2xl" : "gap-1.5 px-2 py-1";
 
 	return (
 		<span className={`inline-flex items-center rounded-full font-bold ${tone} ${sizing}`}>
-			{verified && <BadgeCheck size={size === "lg" ? 18 : 13} aria-label="Verified account" className="shrink-0" />}
+			{verified && <BadgeCheck size={size === "lg" ? 18 : 13} aria-label={t("verified")} className="shrink-0" />}
 			{raw ? label : `@${label}`}
 		</span>
 	);

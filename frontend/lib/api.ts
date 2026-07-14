@@ -28,8 +28,12 @@ async function localizeError(message: string, token?: string) {
       cache: "no-store",
     });
     if (!response.ok) return message;
-    const payload = (await response.json()) as { translated?: string };
-    return payload.translated?.trim() || message;
+    const payload = (await response.json()) as { translated?: string; source?: string };
+    const translated = payload.translated?.trim();
+    if (translated && payload.source === "lumina") {
+      window.dispatchEvent(new CustomEvent("keetapay:lumina-translation"));
+    }
+    return translated || message;
   } catch {
     return message;
   }

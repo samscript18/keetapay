@@ -2,8 +2,10 @@
 
 import { PrivyProvider } from "@privy-io/react-auth";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export function PrivyProviders({ children }: { children: React.ReactNode }) {
+	const t = useTranslations("system");
 	const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 
 	useEffect(() => {
@@ -30,9 +32,9 @@ export function PrivyProviders({ children }: { children: React.ReactNode }) {
 		return (
 			<main className="grid min-h-screen place-items-center bg-background px-4 text-foreground">
 				<div className="max-w-md rounded-[8px] border border-white/10 bg-white/[0.06] p-6">
-					<h1 className="text-2xl font-black">Privy app ID required</h1>
+					<h1 className="text-2xl font-black">{t("privyRequired")}</h1>
 					<p className="mt-3 text-sm leading-6 text-white/58">
-						Add `NEXT_PUBLIC_PRIVY_APP_ID` to `frontend/.env.local`, then restart the frontend dev server. Privy is used only for login and sessions; Keeta Pay does not create embedded Privy wallets.
+						{t("privyInstructions")}
 					</p>
 				</div>
 			</main>

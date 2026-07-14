@@ -17,6 +17,7 @@ import { api } from "@/lib/api";
 import { shortAddress } from "@/lib/utils";
 import { useAuthenticatedApi } from "@/hooks/use-authenticated-api";
 import { usePrivy } from "@privy-io/react-auth";
+import { useTranslations } from "next-intl";
 
 export default function DashboardPage() {
 	return (
@@ -27,6 +28,7 @@ export default function DashboardPage() {
 }
 
 function DashboardContent() {
+	const t = useTranslations("dashboard");
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const initialRecipientUsername = searchParams.get("recipient");
@@ -76,26 +78,26 @@ function DashboardContent() {
 									<div className="flex items-start justify-between gap-4">
 										<div>
 											<div className="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
-												<BadgeCheck size={14} /> Keeta testnet wallet
+												<BadgeCheck size={14} /> {t("walletBadge")}
 											</div>
-											<p className="text-sm text-white/45">Available balance</p>
+											<p className="text-sm text-white/45">{t("balance")}</p>
 											<h1 className="mt-2 text-5xl font-black tabular-nums md:text-6xl" title={balance}>
 												{formatBalance(balance)} <span className="text-xl text-white/45">KTA</span>
 											</h1>
-											<p className="mt-3 text-sm text-white/50">Keeta testnet wallet: {shortAddress(user?.walletAddress)}</p>
+											<p className="mt-3 text-sm text-white/50">{t("walletAddress", { address: shortAddress(user?.walletAddress) })}</p>
 										</div>
 										<button
 											className="rounded-[8px] border border-white/10 bg-black/20 p-3 hover:bg-white/10"
-											onClick={() => navigator.clipboard.writeText(user?.username ?? "").then(() => toast.success("Username copied"))}
-											aria-label="Copy username"
+											onClick={() => navigator.clipboard.writeText(user?.username ?? "").then(() => toast.success(t("usernameCopied")))}
+											aria-label={t("copyUsername")}
 										>
 											<Copy size={18} />
 										</button>
 									</div>
 									<div className="mt-6 grid gap-3 sm:grid-cols-3">
-										<Metric label="This week" value={`${history.length} payments`} icon={Clock3} />
-										<Metric label="Identity" value={`@${user?.username}`} icon={Sparkles} />
-										<Metric label="Network" value="Testnet" icon={WalletCards} />
+										<Metric label={t("thisWeek")} value={t("paymentCount", { count: history.length })} icon={Clock3} />
+										<Metric label={t("identity")} value={`@${user?.username}`} icon={Sparkles} />
+										<Metric label={t("network")} value={t("testnet")} icon={WalletCards} />
 									</div>
 								</div>
 							</Card>
@@ -110,16 +112,16 @@ function DashboardContent() {
 												const words = user.bio.trim().split(/\s+/);
 												return words.length > 25 ? words.slice(0, 25).join(" ") + "..." : user.bio;
 											})()
-										: "No bio available"}
+										: t("noBio")}
 								</p>
 								<a className="mt-5 flex items-center gap-2 text-sm text-accent" href={`/u/${user?.username}`}>
-									View public profile <ExternalLink size={15} />
+									{t("viewProfile")} <ExternalLink size={15} />
 								</a>
 								<Link
 									className="mt-6 flex h-11 items-center justify-center gap-2 rounded-[8px] border border-white/10 bg-white/[0.06] px-4 text-sm font-bold text-white hover:bg-white/10"
 									href="/withdraw"
 								>
-									Withdraw KTA <ArrowUpRight size={15} />
+									{t("withdraw")} <ArrowUpRight size={15} />
 								</Link>
 							</Card>
 						</aside>
@@ -127,7 +129,7 @@ function DashboardContent() {
 							<SendCard initialRecipientUsername={initialRecipientUsername} />
 						</div>
 						<Card className="col-span-full">
-							<h2 className="mb-4 text-lg font-bold">Recent activity</h2>
+							<h2 className="mb-4 text-lg font-bold">{t("recentActivity")}</h2>
 							<ActivityList transactions={history} currentUsername={user?.username} />
 						</Card>
 					</>

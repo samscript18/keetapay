@@ -6,10 +6,13 @@ import { Card } from "@/components/ui/card";
 import { ActivityList } from "@/features/profile/activity-list";
 import { api } from "@/lib/api";
 import { shortAddress } from "@/lib/utils";
+import { getLocale, getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function PublicProfile({ params }: { params: Promise<{ username: string }> }) {
+	const t = await getTranslations("profile");
+	const locale = await getLocale();
 	const { username } = await params;
 	const [user, history] = await Promise.all([api.publicUser(username), api.publicHistory(username)]);
 	const profileUsername = user.username ?? username;
@@ -29,7 +32,7 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 							<Avatar src={user.profileImage} username={user.username} size="lg" />
 							<div className="min-w-0">
 								<div className="mb-3 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
-									<WalletCards size={14} /> KeetPay profile
+									<WalletCards size={14} /> {t("badge")}
 								</div>
 								<div className="pt-1.5 pb-4">
 									<UsernamePill username={profileUsername} proof={user.identityProof} size="lg" />
@@ -39,7 +42,7 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 						</div>
 
 						<div className="rounded-[8px] border border-white/10 bg-black/20 p-4">
-							<p className="text-xs font-bold uppercase tracking-[0.18em] text-white/34">Wallet</p>
+							<p className="text-xs font-bold uppercase tracking-[0.18em] text-white/34">{t("wallet")}</p>
 							<p className="mt-3 break-all font-mono text-sm text-white/68">{shortAddress(user.walletAddress)}</p>
 							<a
 								href={`https://explorer.test.keeta.com/account/${user.walletAddress}`}
@@ -47,39 +50,38 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 								rel="noreferrer"
 								className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-accent hover:text-accent/80"
 							>
-								View account <ExternalLink size={15} />
+								{t("viewAccount")} <ExternalLink size={15} />
 							</a>
 						</div>
 					</div>
 				</section>
 
 				<section className="mt-4 grid gap-3 md:grid-cols-4">
-					<ProfileMetric label="Payments" value={String(history.length)} icon={CalendarDays} />
-					<ProfileMetric label="Sent" value={String(sent)} icon={ArrowUpRight} />
-					<ProfileMetric label="Received" value={String(received)} icon={ArrowDownLeft} />
-					<ProfileMetric label="Volume" value={`${formatCompact(totalVolume)} KTA`} icon={Copy} />
+					<ProfileMetric label={t("payments")} value={String(history.length)} icon={CalendarDays} />
+					<ProfileMetric label={t("sent")} value={String(sent)} icon={ArrowUpRight} />
+					<ProfileMetric label={t("received")} value={String(received)} icon={ArrowDownLeft} />
+					<ProfileMetric label={t("volume")} value={`${formatCompact(totalVolume, locale)} KTA`} icon={Copy} />
 				</section>
 
 				<div className="flex max-lg:flex-col justify-between items-center my-4 gap-4">
 					<Card className="w-full h-max">
-						<h2 className="text-lg font-bold">Pay @{profileUsername}</h2>
+						<h2 className="text-lg font-bold">{t("pay", { username: profileUsername })}</h2>
 						<p className="mt-2 text-sm leading-6 text-white/52">
-							Start a secure transfer from your dashboard with this recipient already selected, making payments faster and more convenient. This recipient will already be filled in for you so
-							you can quickly make a seamless transfer from your dashboard without needing to enter their username or wallet address.
+							{t("payDescription")}
 						</p>
 						<a
 							href={`/dashboard?recipient=${encodeURIComponent(profileUsername)}`}
 							className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-[8px] bg-accent px-4 text-sm font-black text-black hover:bg-accent/90"
 						>
-							Send KTA
+							{t("sendKta")}
 						</a>
 					</Card>
 					<Card className="w-full">
-						<h2 className="text-lg font-bold">Trust signals</h2>
+						<h2 className="text-lg font-bold">{t("trustSignals")}</h2>
 						<div className="mt-4 space-y-3 text-sm">
-							<TrustRow label="Username" value={`@${profileUsername}`} />
-							<TrustRow label="Network" value="Keeta testnet" />
-							<TrustRow label="Address" value={shortAddress(user.walletAddress)} />
+							<TrustRow label={t("username")} value={`@${profileUsername}`} />
+							<TrustRow label={t("network")} value={t("testnet")} />
+							<TrustRow label={t("address")} value={shortAddress(user.walletAddress)} />
 						</div>
 					</Card>
 				</div>
@@ -88,10 +90,10 @@ export default async function PublicProfile({ params }: { params: Promise<{ user
 					<Card>
 						<div className="mb-5 flex items-center justify-between gap-4">
 							<div>
-								<h2 className="text-2xl font-black">Payment history</h2>
-								<p className="mt-1 text-sm text-white/45">Wallet activity for @{profileUsername}</p>
+								<h2 className="text-2xl font-black">{t("history")}</h2>
+								<p className="mt-1 text-sm text-white/45">{t("activityFor", { username: profileUsername })}</p>
 							</div>
-							<span className="rounded-full border border-white/10 px-3 py-1 text-xs font-bold text-white/46">{history.length} total</span>
+							<span className="rounded-full border border-white/10 px-3 py-1 text-xs font-bold text-white/46">{t("total", { count: history.length })}</span>
 						</div>
 						<ActivityList transactions={history} currentUsername={profileUsername} />
 					</Card>
@@ -120,8 +122,8 @@ function TrustRow({ label, value }: { label: string; value: string }) {
 	);
 }
 
-function formatCompact(value: number) {
-	return new Intl.NumberFormat(undefined, {
+function formatCompact(value: number, locale: string) {
+	return new Intl.NumberFormat(locale, {
 		maximumFractionDigits: 1,
 		notation: "compact",
 	}).format(value);
