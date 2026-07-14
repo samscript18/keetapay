@@ -14,8 +14,10 @@ import { api, ApiUser } from "@/lib/api";
 import { shortAddress } from "@/lib/utils";
 import { useAuthenticatedApi } from "@/hooks/use-authenticated-api";
 import { usePrivy } from "@privy-io/react-auth";
+import { useTranslations } from "next-intl";
 
 export default function SettingsPage() {
+	const t = useTranslations("settings");
 	const { token } = useAuthenticatedApi();
 	const { authenticated, user: privyUser, linkEmail, linkGoogle, linkTwitter } = usePrivy();
 	const [user, setUser] = useState<ApiUser | null>(null);
@@ -63,9 +65,9 @@ export default function SettingsPage() {
 				bio: user.bio,
 			});
 			setUser(updated);
-			toast.success("Settings saved");
+			toast.success(t("saved"));
 		} catch (error) {
-			toast.error("Could not save settings", { description: error instanceof Error ? error.message : "Try again" });
+			toast.error(t("saveFailed"), { description: error instanceof Error ? error.message : t("tryAgain") });
 		} finally {
 			setSaving(false);
 		}
@@ -79,9 +81,9 @@ export default function SettingsPage() {
 			const authToken = await token();
 			const updated = await api.uploadAvatar(authToken, file);
 			setUser(updated);
-			toast.success("Avatar updated");
+			toast.success(t("avatarUpdated"));
 		} catch (error) {
-			toast.error("Avatar upload failed", { description: error instanceof Error ? error.message : "Try another image" });
+			toast.error(t("avatarFailed"), { description: error instanceof Error ? error.message : t("tryAnotherImage") });
 		} finally {
 			setUploadingAvatar(false);
 			event.target.value = "";
@@ -100,7 +102,7 @@ export default function SettingsPage() {
 								<Avatar src={user.profileImage} username={user.username} size="lg" />
 								<button
 									type="button"
-									aria-label="Upload avatar"
+									aria-label={t("uploadAvatar")}
 									onClick={() => fileInputRef.current?.click()}
 									disabled={uploadingAvatar}
 									className="absolute -bottom-1 -right-1 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-accent text-black shadow-glow transition hover:bg-[#6affbc]"
@@ -115,10 +117,10 @@ export default function SettingsPage() {
 								{uploadingAvatar ? (
 									<div className="flex justify-center items-center gap-x-4">
 										<Loader className="animate-spin" size={18} />
-										<span>Uploading avatar...</span>
+										<span>{t("uploadingAvatar")}</span>
 									</div>
 								) : (
-									<span>Profile image is stored securely.</span>
+									<span>{t("imageSecure")}</span>
 								)}
 							</div>
 						</Card>
@@ -129,54 +131,54 @@ export default function SettingsPage() {
 									<UserRound size={20} />
 								</div>
 								<div>
-									<h2 className="text-2xl font-black">Account settings</h2>
-									<p className="text-sm text-white/48">Update your social payment identity.</p>
+									<h2 className="text-2xl font-black">{t("accountTitle")}</h2>
+									<p className="text-sm text-white/48">{t("accountDescription")}</p>
 								</div>
 							</div>
 							<form onSubmit={submit} className="space-y-4">
 								<div>
-									<label className="mb-2 block text-sm font-semibold text-white/70">Username</label>
+									<label className="mb-2 block text-sm font-semibold text-white/70">{t("username")}</label>
 									<Input
 										value={user.username ?? ""}
 										onChange={(e) => setUser((u) => (u ? { ...u, username: e.target.value.toLowerCase().replace("@", "") } : u))}
-										placeholder="username"
+										placeholder={t("usernamePlaceholder")}
 									/>
 									{checkingUsername ? (
 										<Skeleton className="mt-2 h-4 w-44" />
 									) : (
 										<p className={available === false ? "mt-2 text-sm text-coral" : available ? "mt-2 text-sm text-accent" : "mt-2 text-sm text-white/45"}>
 											{available === false
-												? "That username is not available."
+												? t("usernameUnavailable")
 												: available
-													? "Username is available."
-													: "Username availability is checked before saving."}
+													? t("usernameAvailable")
+													: t("usernameCheck")}
 										</p>
 									)}
 								</div>
 								<div>
-									<label className="mb-2 block text-sm font-semibold text-white/70">Bio</label>
-									<Textarea value={user.bio ?? ""} onChange={(e) => setUser((u) => (u ? { ...u, bio: e.target.value } : u))} placeholder="Bio" />
+									<label className="mb-2 block text-sm font-semibold text-white/70">{t("bio")}</label>
+									<Textarea value={user.bio ?? ""} onChange={(e) => setUser((u) => (u ? { ...u, bio: e.target.value } : u))} placeholder={t("bioPlaceholder")} />
 								</div>
 								<div className="flex items-center justify-between rounded-[8px] border border-white/10 bg-white/[0.04] p-3">
 									<div>
-										<p className="text-xs text-white/42">Keeta testnet wallet</p>
+										<p className="text-xs text-white/42">{t("wallet")}</p>
 										<span className="text-sm text-white/70 max-lg:hidden">{user.walletAddress}</span>
 										<span className="text-sm text-white/70 lg:hidden">{shortAddress(user.walletAddress)}</span>
 									</div>
 									<button
 										type="button"
-										aria-label="Copy wallet"
-										onClick={() => navigator.clipboard.writeText(user.walletAddress).then(() => toast.success("Wallet address copied"))}
+										aria-label={t("copyWallet")}
+										onClick={() => navigator.clipboard.writeText(user.walletAddress).then(() => toast.success(t("walletCopied")))}
 									>
 										<Copy size={18} />
 									</button>
 								</div>
 								<div className="flex justify-center items-center gap-2 rounded-[8px] bg-white/[0.04] p-3 text-sm text-white/52">
 									<ShieldCheck size={17} className="text-accent" />
-									Sensitive informations are stored securely.
+									{t("sensitiveSecure")}
 								</div>
 								<Button loading={saving} disabled={available === false}>
-									{saving ? "Saving..." : "Save settings"}
+									{saving ? t("saving") : t("save")}
 								</Button>
 							</form>
 						</Card>
@@ -187,45 +189,48 @@ export default function SettingsPage() {
 									<ShieldCheck size={20} />
 								</div>
 								<div>
-									<h2 className="text-2xl font-black">Sign-in methods</h2>
-									<p className="text-sm text-white/48">Link email, Google, and X to the same KeetaPay account.</p>
+									<h2 className="text-2xl font-black">{t("signInTitle")}</h2>
+									<p className="text-sm text-white/48">{t("signInDescription")}</p>
 								</div>
 							</div>
 							<div className="grid gap-3">
 								<SignInMethod
-									label="Email"
-									description={privyUser?.email?.address ?? "Add email OTP login"}
+									label={t("email")}
+									description={privyUser?.email?.address ?? t("addEmail")}
 									connected={Boolean(privyUser?.email)}
 									icon={Mail}
 									onLink={() => {
 										linkEmail();
-										toast.message("Opening Privy email linking");
+										toast.message(t("openingEmail"));
 									}}
+									linkedLabel={t("linked")} linkLabel={t("link")} comingSoonLabel={t("comingSoon")}
 								/>
 								<SignInMethod
 									label="Google"
-									description={privyUser?.google?.email ?? "Add Google login"}
+									description={privyUser?.google?.email ?? t("addGoogle")}
 									connected={Boolean(privyUser?.google)}
 									icon={GoogleGlyph}
 									onLink={() => {
 										linkGoogle();
-										toast.message("Redirecting to Google");
+										toast.message(t("redirectGoogle"));
 									}}
+									linkedLabel={t("linked")} linkLabel={t("link")} comingSoonLabel={t("comingSoon")}
 								/>
 								<SignInMethod
 									label="X / Twitter"
-									description={privyUser?.twitter?.username ? `@${privyUser.twitter.username}` : "Add X login"}
+									description={privyUser?.twitter?.username ? `@${privyUser.twitter.username}` : t("addX")}
 									connected={Boolean(privyUser?.twitter)}
 									icon={Twitter}
 									onLink={() => {
 										linkTwitter();
-										toast.message("Redirecting to X");
+										toast.message(t("redirectX"));
 									}}
+									linkedLabel={t("linked")} linkLabel={t("link")} comingSoonLabel={t("comingSoon")}
 									// disabled
 								/>
 							</div>
 							<p className="mt-4 rounded-[8px] bg-white/[0.04] p-3 text-sm leading-6 text-white/50">
-								These methods all resolve to the same account, so your Keeta username, wallet, and transaction history stay attached to one account.
+								{t("methodsNote")}
 							</p>
 						</Card>
 					</>
@@ -235,7 +240,7 @@ export default function SettingsPage() {
 	);
 }
 
-function SignInMethod({ label, description, connected, icon: Icon, onLink, disabled = false }: { label: string; description: string; connected: boolean; icon: React.ElementType; onLink: () => void; disabled?: boolean }) {
+function SignInMethod({ label, description, connected, icon: Icon, onLink, disabled = false, linkedLabel, linkLabel, comingSoonLabel }: { label: string; description: string; connected: boolean; icon: React.ElementType; onLink: () => void; disabled?: boolean; linkedLabel: string; linkLabel: string; comingSoonLabel: string }) {
 	return (
 		<div className="flex flex-col gap-3 rounded-[8px] border border-white/10 bg-white/[0.04] p-4 sm:flex-row sm:items-center sm:justify-between">
 			<div className="flex min-w-0 items-center gap-3">
@@ -251,7 +256,7 @@ function SignInMethod({ label, description, connected, icon: Icon, onLink, disab
 				</div>
 			</div>
 			<Button type="button" variant={connected ? "secondary" : "primary"} onClick={onLink} disabled={disabled}>
-				{connected ? "Linked" : disabled ? "Coming soon" : "Link"}
+				{connected ? linkedLabel : disabled ? comingSoonLabel : linkLabel}
 			</Button>
 		</div>
 	);

@@ -1,10 +1,11 @@
 import { ActivityCard } from "@/components/common/activity-card";
 import type { ApiTransaction } from "@/types/api";
+import { useTranslations } from "next-intl";
 
 export function ActivityList({
 	transactions,
 	currentUsername,
-	emptyMessage = "No transactions yet. Send the first one.",
+	emptyMessage,
 	showDescription = true,
 }: {
 	transactions: ApiTransaction[];
@@ -12,7 +13,8 @@ export function ActivityList({
 	emptyMessage?: string;
 	showDescription?: boolean;
 }) {
-	if (!transactions.length) return <p className="text-sm text-white/45">{emptyMessage}</p>;
+	const t = useTranslations("activity");
+	if (!transactions.length) return <p className="text-sm text-white/45">{emptyMessage ?? t("empty")}</p>;
 
 	return (
 		<div className="grid md:grid-cols-2 gap-4">

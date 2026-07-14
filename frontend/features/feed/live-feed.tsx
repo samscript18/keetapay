@@ -6,6 +6,7 @@ import UsernamePill from "@/components/shared/username-pill";
 import { api } from "@/lib/api";
 import { shortAddress } from "@/lib/utils";
 import type { ApiTransaction } from "@/types/api";
+import { useTranslations } from "next-intl";
 
 type Display = {
 	key: string;
@@ -26,6 +27,7 @@ const fallback = [
 ];
 
 export function LiveFeed({ compact = false, display }: { compact?: boolean; display?: Display }) {
+	const t = useTranslations("activity");
 	const [items, setItems] = useState<ApiTransaction[]>([]);
 
 	useEffect(() => {
@@ -77,7 +79,7 @@ export function LiveFeed({ compact = false, display }: { compact?: boolean; disp
 					<div key={`${item.key}-${index}`} className="glass flex min-w-[330px] items-center gap-3 rounded-[8px] px-4 py-2">
 						<Avatar src={(item as any).avatar} username={item.from} size="sm" />
 						<p className="flex min-w-0 items-center gap-2 truncate text-sm text-white/82">
-							<UsernamePill username={item.from} proof={item.senderProof} /> <span>sent</span> <span className="font-semibold text-accent">{item.amount} KTA</span> <span>to</span>{" "}
+							<UsernamePill username={item.from} proof={item.senderProof} /> <span>{t("sent")}</span> <span className="font-semibold text-accent">{item.amount} KTA</span> <span>{t("to")}</span>{" "}
 							{item.to.includes("...") ? (
 								<span className="rounded-full bg-sky/15 px-2 py-1 font-bold text-sky">{item.to}</span>
 							) : (

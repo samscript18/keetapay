@@ -5,12 +5,14 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { ApiPaymentRequest } from "@/types/api";
+import { useTranslations } from "next-intl";
 
 export function PaymentRequestCard({
   request,
 }: {
   request: ApiPaymentRequest;
 }) {
+  const t = useTranslations("requestCard");
   const expired = isExpired(request);
   const url = paymentRequestUrl(request.code);
 
@@ -25,11 +27,11 @@ export function PaymentRequestCard({
                 : "rounded-full bg-accent/12 px-2 py-1 text-xs font-bold text-accent"
             }
           >
-            {expired ? "Expired" : "Active"}
+            {expired ? t("expired") : t("active")}
           </span>
           <p className="mt-4 text-3xl font-black">{request.amount} KTA</p>
           <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/50">
-            {request.message || "Payment request"}
+            {request.message || t("defaultMessage")}
           </p>
         </div>
         <QrCode
@@ -38,7 +40,7 @@ export function PaymentRequestCard({
         />
       </div>
       <p className="mt-5 text-xs text-white/42">
-        Expires {new Date(request.expiresAt).toLocaleString()}
+        {t("expires", { date: new Date(request.expiresAt).toLocaleString() })}
       </p>
       <div className="mt-4 flex items-center gap-2">
         <Button
@@ -47,14 +49,14 @@ export function PaymentRequestCard({
           onClick={() =>
             navigator.clipboard
               .writeText(url)
-              .then(() => toast.success("Link copied"))
+              .then(() => toast.success(t("copied")))
           }
           disabled={expired}
         >
-          <Copy size={16} /> Copy
+          <Copy size={16} /> {t("copy")}
         </Button>
         <Button asChild variant="ghost" className="px-3" disabled={expired}>
-          <a href={`/pay/${request.code}`} aria-label="Open payment request">
+          <a href={`/pay/${request.code}`} aria-label={t("open")}>
             <ExternalLink size={17} />
           </a>
         </Button>

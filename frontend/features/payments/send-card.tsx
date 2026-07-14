@@ -225,6 +225,7 @@ export function SendCard({
 }
 
 function UsernameSelector({ value, onChange, initialUsername, locked = false }: { value?: SelectedUser; onChange: (user?: SelectedUser) => void; initialUsername?: string | null; locked?: boolean }) {
+	const t = useTranslations("payment");
 	const [query, setQuery] = useState(value?.username ? `@${value.username}` : initialUsername ? `@${initialUsername}` : "");
 	const [suggestions, setSuggestions] = useState<ApiUser[]>([]);
 	const [checking, setChecking] = useState(false);
@@ -274,7 +275,7 @@ function UsernameSelector({ value, onChange, initialUsername, locked = false }: 
 				{!locked && (
 					<button
 						type="button"
-						aria-label="Clear username"
+						aria-label={t("clearUsername")}
 						className="grid h-8 w-8 place-items-center rounded-[8px] bg-white/10 text-white/70 hover:bg-white/15"
 						onClick={() => {
 							setQuery("");
@@ -299,9 +300,9 @@ function UsernameSelector({ value, onChange, initialUsername, locked = false }: 
 					setClearedByUser(false);
 					setQuery(e.target.value.toLowerCase());
 				}}
-				placeholder="@username"
+				placeholder={t("usernamePlaceholder")}
 			/>
-			{checking ? <Skeleton className="h-4 w-44" /> : notFound ? <p className="text-sm text-coral">That username does not exist.</p> : null}
+			{checking ? <Skeleton className="h-4 w-44" /> : notFound ? <p className="text-sm text-coral">{t("usernameMissing")}</p> : null}
 			{suggestions.length > 0 && (
 				<div className="grid gap-2">
 					{suggestions.map((user) => (
@@ -322,6 +323,7 @@ function UsernameSelector({ value, onChange, initialUsername, locked = false }: 
 }
 
 function BatchPayments({ rows, onChange }: { rows: BatchPaymentRow[]; onChange: (rows: BatchPaymentRow[]) => void }) {
+	const t = useTranslations("payment");
 	const validCount = useMemo(() => rows.filter((row) => row.recipient?.username && row.amount).length, [rows]);
 
 	return (
@@ -329,28 +331,28 @@ function BatchPayments({ rows, onChange }: { rows: BatchPaymentRow[]; onChange: 
 			{rows.map((row, index) => (
 				<div key={row.id} className="rounded-[8px] border border-white/10 bg-white/[0.035] p-3">
 					<div className="mb-3 flex items-center justify-between">
-						<p className="text-sm font-bold text-white/75">Recipient {index + 1}</p>
+						<p className="text-sm font-bold text-white/75">{t("recipientNumber", { number: index + 1 })}</p>
 						{rows.length > 1 && (
 							<button type="button" className="text-xs text-white/42 hover:text-white" onClick={() => onChange(rows.filter((item) => item.id !== row.id))}>
-								Remove
+								{t("remove")}
 							</button>
 						)}
 					</div>
 					<UsernameSelector value={row.recipient} onChange={(recipient) => onChange(rows.map((item) => (item.id === row.id ? { ...item, recipient } : item)))} />
 					<div className="mt-3 grid gap-3 sm:grid-cols-2">
-						<Input value={row.amount} onChange={(e) => onChange(rows.map((item) => (item.id === row.id ? { ...item, amount: e.target.value } : item)))} placeholder="Amount" />
-						<Input value={row.message} onChange={(e) => onChange(rows.map((item) => (item.id === row.id ? { ...item, message: e.target.value } : item)))} placeholder="Message" />
+						<Input value={row.amount} onChange={(e) => onChange(rows.map((item) => (item.id === row.id ? { ...item, amount: e.target.value } : item)))} placeholder={t("amount")} />
+						<Input value={row.message} onChange={(e) => onChange(rows.map((item) => (item.id === row.id ? { ...item, message: e.target.value } : item)))} placeholder={t("message")} />
 					</div>
 				</div>
 			))}
 			<div className="flex items-center justify-between">
-				<p className="text-sm text-white/45">{validCount} ready to send</p>
+				<p className="text-sm text-white/45">{t("readyCount", { count: validCount })}</p>
 				<button
 					type="button"
 					className="inline-flex items-center gap-2 rounded-[8px] border border-white/10 px-3 py-2 text-sm font-semibold text-white/70 hover:bg-white/10"
 					onClick={() => onChange([...rows, { id: crypto.randomUUID(), amount: "", message: "" }])}
 				>
-					<Plus size={16} /> Add user
+					<Plus size={16} /> {t("addUser")}
 				</button>
 			</div>
 		</div>

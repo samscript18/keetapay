@@ -10,8 +10,10 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { useAuthenticatedApi } from '@/hooks/use-authenticated-api';
+import { useTranslations } from 'next-intl';
 
 export default function OnboardingPage() {
+  const t = useTranslations('onboarding');
   const router = useRouter();
   const { ready, authenticated } = usePrivy();
   const { token } = useAuthenticatedApi();
@@ -47,10 +49,10 @@ export default function OnboardingPage() {
     try {
       const authToken = await token();
       await api.createProfile(authToken, username);
-      toast.success(`@${username} is yours`);
+      toast.success(t('claimed', { username }));
       router.push('/dashboard');
     } catch (error) {
-      toast.error('Username setup failed', { description: error instanceof Error ? error.message : 'Try another username' });
+      toast.error(t('failed'), { description: error instanceof Error ? error.message : t('tryAnother') });
     } finally {
       setLoading(false);
     }
@@ -59,18 +61,18 @@ export default function OnboardingPage() {
   return (
     <main className="grid min-h-screen place-items-center px-4">
       <Card className="w-full max-w-md">
-        <h1 className="text-3xl font-black">Claim your @name</h1>
-        <p className="mt-2 text-sm text-white/50">Your Keeta wallet is created behind the scenes. Your friends only need this username.</p>
+        <h1 className="text-3xl font-black">{t('title')}</h1>
+        <p className="mt-2 text-sm text-white/50">{t('description')}</p>
         <form onSubmit={submit} className="mt-6 space-y-4">
           <Input value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace('@', ''))} placeholder="alex" />
           {checkingAvailability ? (
             <Skeleton className="h-4 w-48" />
           ) : (
             <p className={available ? 'text-sm text-accent' : 'text-sm text-coral'}>
-              {available === null ? 'Use lowercase letters, numbers, or underscore.' : available ? `@${username} is available` : `@${username} is taken`}
+              {available === null ? t('hint') : available ? t('available', { username }) : t('taken', { username })}
             </p>
           )}
-          <Button className="w-full" loading={loading} disabled={!available}>{loading ? 'Creating...' : 'Create profile'}</Button>
+          <Button className="w-full" loading={loading} disabled={!available}>{loading ? t('creating') : t('create')}</Button>
         </form>
       </Card>
     </main>

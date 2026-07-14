@@ -4,7 +4,8 @@
     "en": "English",
     "pt-BR": "Português",
     "zh-CN": "简体中文",
-    "fr": "Français"
+    "fr": "Français",
+    "luminaActive": "Lumina translated the latest error"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -51,7 +52,16 @@
     "failed": "Payment failed",
     "tryAgain": "Try again",
     "privateConfirmed": "Private payment confirmed inside KeetaPay.",
-    "publicConfirmed": "Payment confirmed and added to the live feed."
+    "publicConfirmed": "Payment confirmed and added to the live feed.",
+    "clearUsername": "Clear username",
+    "usernamePlaceholder": "@username",
+    "usernameMissing": "That username does not exist.",
+    "recipientNumber": "Recipient {number}",
+    "remove": "Remove",
+    "amount": "Amount",
+    "message": "Message",
+    "readyCount": "{count} ready to send",
+    "addUser": "Add user"
   },
   "withdraw": {
     "badge": "External wallet",
@@ -69,7 +79,12 @@
     "successDescription": "Returning to your dashboard in 2 seconds.",
     "cancelled": "Withdrawal cancelled",
     "failed": "Withdrawal failed",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "dashboard": "Dashboard",
+    "wallet": "Wallet",
+    "availableBalance": "Available balance",
+    "verifiedTitle": "Verified withdrawal",
+    "verifiedDescription": "Your Keeta SDK certificate state is attached to the withdrawal record."
   },
   "transferStatus": {
     "eyebrow": "Transfer status",
@@ -80,5 +95,26 @@
     "cancelled": "Cancelled",
     "cancel": "Cancel",
     "close": "Close"
-  }
+  },
+  "landing": {
+    "badge": "Verified Keeta payments", "headline": "Send verified crypto payments.", "headlineAccent": "Verified, instant, and easy.", "subtitle": "KeetaPay lets you move crypto with verified @usernames and SDK-backed identity checks.", "getStarted": "Get started", "viewDemo": "View demo", "signInFailed": "Could not finish sign in", "tryAgain": "Please try again.",
+    "metrics": { "sendTime": "Avg send time", "profiles": "Verified profiles", "volume": "Live volume" },
+    "demo": { "balance": "Available balance", "to": "To", "amount": "Amount", "note": "Sales payment", "action": "Send in one tap" },
+    "proof": { "transfers": "10k+ social transfers routed", "identities": "SDK-verified payment identities", "checks": "SDK-backed identity checks" },
+    "features": { "transferEyebrow": "Verified transfer", "transferTitle": "Pay verified usernames fast", "transferDescription": "Search verified @usernames, add KTA, and tap send. The feed stays lively.", "nowPlaying": "Now playing", "identityTitle": "Keeta identity inside", "identityDescription": "Wallets, certificates, and transfers run through the Keeta SDK.", "accessTitle": "Secure access only", "accessDescription": "Email, Google, and Twitter/X sessions with SDK identity checks.", "checksTitle": "SDK identity checks", "checksDescription": "Usernames resolve to Keeta certificates with verified status.", "trustTitle": "Trust-led payments", "trustDescription": "Make verified transfers feel social, polished, and simple." },
+    "how": { "title": "How it works", "description": "Login, verify identity, claim a wallet, and pay socially.", "liveFeed": "Live feed" },
+    "steps": { "1": "Secure login powered by Privy authentication", "2": "SDK certificate issued for every KeetaPay wallet", "3": "Sensitive wallet keys are stored securely and never exposed", "4": "Verified usernames replace complex wallet addresses", "5": "Search and select recipients instantly", "6": "Transfers are signed with the encrypted user wallet", "7": "Transactions are processed on Keeta testnet", "8": "SDK verification keeps profile trust transparent" },
+    "cta": { "eyebrow": "Ready to ship", "title": "Launch verified payments fast.", "description": "Sign in, verify identity, and start sending KTA." }, "footer": "Built for the Keeta Coding Challenge."
+  },
+  "onboarding": { "title": "Claim your @name", "description": "Your Keeta wallet is created behind the scenes. Your friends only need this username.", "hint": "Use lowercase letters, numbers, or underscore.", "available": "@{username} is available", "taken": "@{username} is taken", "creating": "Creating...", "create": "Create profile", "claimed": "@{username} is yours", "failed": "Username setup failed", "tryAnother": "Try another username" },
+  "dashboard": { "walletBadge": "Keeta testnet wallet", "balance": "Available balance", "walletAddress": "Keeta testnet wallet: {address}", "usernameCopied": "Username copied", "copyUsername": "Copy username", "thisWeek": "This week", "paymentCount": "{count} payments", "identity": "Identity", "network": "Network", "testnet": "Testnet", "noBio": "No bio available", "viewProfile": "View public profile", "withdraw": "Withdraw KTA", "recentActivity": "Recent activity" },
+  "transactions": { "title": "Transaction history", "description": "Every KTA payment sent or received by your KeetaPay username.", "all": "All", "sent": "Sent", "received": "Received", "empty": { "all": "No transactions yet.", "sent": "No sent transactions yet.", "received": "No received transactions yet." } },
+  "requests": { "badge": "Payment requests", "title": "Receive KTA with a link.", "description": "Generate an expiring KeetaPay link with your username locked in. The payer can edit the amount before sending without needing your wallet address.", "expiry": "Expiry", "recipient": "Recipient", "you": "You", "format": "Format", "shareableLink": "Shareable link", "requestedAmount": "Requested amount", "amountPlaceholder": "Amount in KTA", "message": "Message", "messagePlaceholder": "What is this request for?", "expiration": "Expiration", "expiryOptions": { "15m": "15 minutes", "1h": "1 hour", "24h": "24 hours", "7d": "7 days" }, "generating": "Generating...", "generateAnother": "Generate another link", "generateLink": "Generate payment link", "generated": "Payment link generated", "copiedDescription": "The link was copied to your clipboard.", "generateFailed": "Could not generate request", "tryAgain": "Try again", "generatedRequests": "Generated requests", "counts": "{active} active, {expired} expired", "filters": { "all": "All {count}", "active": "Active {count}", "expired": "Expired {count}" }, "empty": { "all": "No requests found.", "active": "No active requests found.", "expired": "No expired requests found." } },
+  "requestCard": { "expired": "Expired", "active": "Active", "defaultMessage": "Payment request", "expires": "Expires {date}", "copied": "Link copied", "copy": "Copy", "open": "Open payment request" },
+  "paymentLink": { "expiredTitle": "Payment link expired", "expiredDescription": "Ask the recipient to generate a new KeetaPay link.", "backHome": "Back home", "pay": "Pay @{username}", "defaultMessage": "Complete this KeetaPay request.", "requestedAmount": "Requested amount", "signInTitle": "Sign in to pay", "signInDescription": "Privy verifies your session. KeetaPay sends the KTA transfer from your Keeta wallet.", "continuePrivy": "Continue with Privy" },
+  "settings": { "saved": "Settings saved", "saveFailed": "Could not save settings", "tryAgain": "Try again", "avatarUpdated": "Avatar updated", "avatarFailed": "Avatar upload failed", "tryAnotherImage": "Try another image", "uploadAvatar": "Upload avatar", "uploadingAvatar": "Uploading avatar...", "imageSecure": "Profile image is stored securely.", "accountTitle": "Account settings", "accountDescription": "Update your social payment identity.", "username": "Username", "usernamePlaceholder": "username", "usernameUnavailable": "That username is not available.", "usernameAvailable": "Username is available.", "usernameCheck": "Username availability is checked before saving.", "bio": "Bio", "bioPlaceholder": "Bio", "wallet": "Keeta testnet wallet", "copyWallet": "Copy wallet", "walletCopied": "Wallet address copied", "sensitiveSecure": "Sensitive information is stored securely.", "saving": "Saving...", "save": "Save settings", "signInTitle": "Sign-in methods", "signInDescription": "Link email, Google, and X to the same KeetaPay account.", "email": "Email", "addEmail": "Add email OTP login", "openingEmail": "Opening Privy email linking", "addGoogle": "Add Google login", "redirectGoogle": "Redirecting to Google", "addX": "Add X login", "redirectX": "Redirecting to X", "linked": "Linked", "link": "Link", "comingSoon": "Coming soon", "methodsNote": "These methods resolve to the same account, keeping your Keeta username, wallet, and transaction history together." },
+  "activity": { "shielded": "Shielded", "private": "Private", "sent": "sent", "to": "to", "shieldedKta": "Shielded KTA", "openTransaction": "Open transaction", "empty": "No transactions yet. Send the first one." },
+  "identity": { "verified": "Verified account", "notVerified": "Account not verified", "unknown": "unknown" },
+  "profile": { "badge": "KeetaPay profile", "wallet": "Wallet", "viewAccount": "View account", "payments": "Payments", "sent": "Sent", "received": "Received", "volume": "Volume", "pay": "Pay @{username}", "payDescription": "Start a secure transfer from your dashboard with this recipient already selected.", "sendKta": "Send KTA", "trustSignals": "Trust signals", "username": "Username", "network": "Network", "testnet": "Keeta testnet", "address": "Address", "history": "Payment history", "activityFor": "Wallet activity for @{username}", "total": "{count} total" },
+  "system": { "privyRequired": "Privy app ID required", "privyInstructions": "Add NEXT_PUBLIC_PRIVY_APP_ID to frontend/.env.local, then restart the frontend server. Privy is used only for login and sessions." }
 }

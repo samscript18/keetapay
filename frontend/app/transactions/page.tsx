@@ -13,8 +13,10 @@ import { LiveFeed } from "@/features/feed/live-feed";
 import { api } from "@/lib/api";
 import { useAuthenticatedApi } from "@/hooks/use-authenticated-api";
 import { TransactionFilter } from "@/types/api";
+import { useTranslations } from "next-intl";
 
 export default function TransactionsPage() {
+	const t = useTranslations("transactions");
 	const router = useRouter();
 	const { authenticated } = usePrivy();
 	const { token } = useAuthenticatedApi();
@@ -60,15 +62,15 @@ export default function TransactionsPage() {
 				<Card>
 					<div className="mb-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
 						<div className="w-full">
-							<h1 className="text-3xl font-black">Transaction history</h1>
-							<p className="mt-2 text-sm text-white/48">Every KTA payment sent or received by your KeetaPay username.</p>
+							<h1 className="text-3xl font-black">{t("title")}</h1>
+							<p className="mt-2 text-sm text-white/48">{t("description")}</p>
 						</div>
 						{!loading && (
 							<div className="w-full flex rounded-[8px] border border-white/10 bg-white/[0.04] p-1">
 								{[
-									{ key: "all", label: "All", count: history.length },
-									{ key: "sent", label: "Sent", count: sentCount },
-									{ key: "received", label: "Received", count: receivedCount },
+									{ key: "all", label: t("all"), count: history.length },
+									{ key: "sent", label: t("sent"), count: sentCount },
+									{ key: "received", label: t("received"), count: receivedCount },
 								].map((item) => (
 									<button
 										key={item.key}
@@ -86,7 +88,7 @@ export default function TransactionsPage() {
 							</div>
 						)}
 					</div>
-					{loading ? <TransactionSkeleton /> : <ActivityList transactions={filteredHistory} currentUsername={username} emptyMessage={emptyMessageFor(filter)} />}
+					{loading ? <TransactionSkeleton /> : <ActivityList transactions={filteredHistory} currentUsername={username} emptyMessage={t(`empty.${filter}`)} />}
 				</Card>
 			</div>
 		</AppShell>
@@ -108,10 +110,4 @@ function TransactionSkeleton() {
 			))}
 		</div>
 	);
-}
-
-function emptyMessageFor(filter: TransactionFilter) {
-	if (filter === "sent") return "No sent transactions yet.";
-	if (filter === "received") return "No received transactions yet.";
-	return "No transactions yet.";
 }

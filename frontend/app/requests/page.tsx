@@ -17,8 +17,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api";
 import { useAuthenticatedApi } from "@/hooks/use-authenticated-api";
 import type { ApiPaymentRequest } from "@/types/api";
+import { useTranslations } from "next-intl";
 
 export default function RequestsPage() {
+  const t = useTranslations("requests");
   const { token } = useAuthenticatedApi();
   const [amount, setAmount] = useState<string>("");
   const [message, setMessage] = useState<string>("");
@@ -55,13 +57,13 @@ export default function RequestsPage() {
       );
       const url = paymentRequestUrl(created.code);
       await navigator.clipboard.writeText(url).catch(() => undefined);
-      toast.success("Payment link generated", {
-        description: "The link was copied to your clipboard.",
+      toast.success(t("generated"), {
+        description: t("copiedDescription"),
       });
     },
     onError: (error) => {
-      toast.error("Could not generate request", {
-        description: error instanceof Error ? error.message : "Try again",
+      toast.error(t("generateFailed"), {
+        description: error instanceof Error ? error.message : t("tryAgain"),
       });
     },
   });
@@ -88,15 +90,13 @@ export default function RequestsPage() {
           <div className="absolute right-6 top-6 hidden h-28 w-28 rounded-full bg-accent/15 blur-3xl md:block" />
           <div className="relative max-w-3xl">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
-              <WandSparkles size={14} /> Payment requests
+              <WandSparkles size={14} /> {t("badge")}
             </div>
             <h1 className="text-4xl font-black md:text-6xl">
-              Receive KTA with a link.
+              {t("title")}
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-white/56">
-              Generate an expiring KeetaPay link with your username locked in.
-              The payer can edit the amount before sending, but never needs your
-              wallet address.
+              {t("description")}
             </p>
           </div>
         </section>
@@ -106,38 +106,38 @@ export default function RequestsPage() {
             <div className="mb-6 grid gap-3 md:grid-cols-3">
               <InfoTile
                 icon={Timer}
-                label="Expiry"
-                value={expiresInLabel(expiresIn)}
+                label={t("expiry")}
+                value={t(`expiryOptions.${expiresIn}`)}
               />
-              <InfoTile icon={ShieldCheck} label="Recipient" value="You" />
-              <InfoTile icon={Link2} label="Format" value="Shareable link" />
+              <InfoTile icon={ShieldCheck} label={t("recipient")} value={t("you")} />
+              <InfoTile icon={Link2} label={t("format")} value={t("shareableLink")} />
             </div>
 
             <form onSubmit={submit} className="space-y-4">
               <div>
                 <label className="mb-2 block text-sm font-semibold text-white/70">
-                  Requested amount
+                  {t("requestedAmount")}
                 </label>
                 <Input
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   inputMode="decimal"
-                  placeholder="Amount in KTA"
+                  placeholder={t("amountPlaceholder")}
                 />
               </div>
               <div>
                 <label className="mb-2 block text-sm font-semibold text-white/70">
-                  Message
+                  {t("message")}
                 </label>
                 <Textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="What is this request for?"
+                  placeholder={t("messagePlaceholder")}
                 />
               </div>
               <div>
                 <label className="mb-2 block text-sm font-semibold text-white/70">
-                  Expiration
+                  {t("expiration")}
                 </label>
                 <select
                   value={expiresIn}
@@ -146,10 +146,10 @@ export default function RequestsPage() {
                   }
                   className="h-12 w-full rounded-[8px] border border-white/10 bg-white/[0.06] px-4 text-sm text-white outline-none"
                 >
-                  <option value="15m">15 minutes</option>
-                  <option value="1h">1 hour</option>
-                  <option value="24h">24 hours</option>
-                  <option value="7d">7 days</option>
+                  <option value="15m">{t("expiryOptions.15m")}</option>
+                  <option value="1h">{t("expiryOptions.1h")}</option>
+                  <option value="24h">{t("expiryOptions.24h")}</option>
+                  <option value="7d">{t("expiryOptions.7d")}</option>
                 </select>
               </div>
               <Button
@@ -157,10 +157,10 @@ export default function RequestsPage() {
                 className="w-full"
               >
                 {createRequestMutation.isPending
-                  ? "Generating..."
+                  ? t("generating")
                   : request
-                    ? "Generate another link"
-                    : "Generate payment link"}
+                    ? t("generateAnother")
+                    : t("generateLink")}
               </Button>
             </form>
           </Card>
@@ -207,16 +207,16 @@ export default function RequestsPage() {
         <section className="mt-10">
           <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-2xl font-black">Generated requests</h2>
+              <h2 className="text-2xl font-black">{t("generatedRequests")}</h2>
               <p className="text-sm text-white/48">
-                {activeCount} active, {expiredCount} expired
+                {t("counts", { active: activeCount, expired: expiredCount })}
               </p>
             </div>
             <div className="grid grid-cols-3 rounded-[8px] border border-white/10 bg-white/[0.04] p-1">
               {[
-                ["all", `All ${requests.length}`],
-                ["active", `Active ${activeCount}`],
-                ["expired", `Expired ${expiredCount}`],
+                ["all", t("filters.all", { count: requests.length })],
+                ["active", t("filters.active", { count: activeCount })],
+                ["expired", t("filters.expired", { count: expiredCount })],
               ].map(([key, label]) => (
                 <button
                   key={key}
@@ -253,7 +253,7 @@ export default function RequestsPage() {
                   <div>
                     <Link2 className="mx-auto text-white/36" size={32} />
                     <p className="mt-3 text-sm font-semibold text-white/62">
-                      No {filter === "all" ? "" : filter} requests found.
+                      {t(`empty.${filter}`)}
                     </p>
                   </div>
                 </div>
@@ -282,13 +282,4 @@ function InfoTile({
       <p className="mt-1 text-sm font-bold">{value}</p>
     </div>
   );
-}
-
-function expiresInLabel(value: "15m" | "1h" | "24h" | "7d") {
-  return {
-    "15m": "15 minutes",
-    "1h": "1 hour",
-    "24h": "24 hours",
-    "7d": "7 days",
-  }[value];
 }

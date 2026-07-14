@@ -16,8 +16,10 @@ import { WithdrawCard } from "@/features/payments/withdraw-card";
 import { api } from "@/lib/api";
 import { shortAddress } from "@/lib/utils";
 import { useAuthenticatedApi } from "@/hooks/use-authenticated-api";
+import { useTranslations } from "next-intl";
 
 export default function WithdrawPage() {
+	const t = useTranslations("withdraw");
 	const router = useRouter();
 	const { authenticated } = usePrivy();
 	const { token } = useAuthenticatedApi();
@@ -50,7 +52,7 @@ export default function WithdrawPage() {
 		<AppShell>
 			<div className="mx-auto max-w-6xl px-4 py-8">
 				<Link href="/dashboard" className="mb-4 inline-flex items-center gap-2 text-sm font-bold text-white/54 hover:text-white">
-					<ArrowLeft size={16} /> Dashboard
+					<ArrowLeft size={16} /> {t("dashboard")}
 				</Link>
 
 				{loading ? (
@@ -64,7 +66,7 @@ export default function WithdrawPage() {
 									<Avatar src={user?.profileImage} username={user?.username} size="lg" />
 									<div className="min-w-0">
 										<div className="mb-3 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
-											<WalletCards size={14} /> External withdrawal
+											<WalletCards size={14} /> {t("badge")}
 										</div>
 										<div className="pt-1.5 pb-4">
 											<UsernamePill username={user?.username} proof={user?.identityProof} size="lg" />
@@ -73,9 +75,9 @@ export default function WithdrawPage() {
 								</div>
 
 								<div className="rounded-[8px] border border-white/10 bg-black/20 p-4">
-									<p className="text-xs font-bold uppercase tracking-[0.18em] text-white/34">Wallet</p>
+									<p className="text-xs font-bold uppercase tracking-[0.18em] text-white/34">{t("wallet")}</p>
 									<p className="mt-3 break-all font-mono text-sm text-white/68">{shortAddress(user?.walletAddress)}</p>
-									<p className="mt-5 text-xs text-white/42">Available balance</p>
+									<p className="mt-5 text-xs text-white/42">{t("availableBalance")}</p>
 									<p className="mt-1 text-3xl font-black">
 										{balance} <span className="text-base text-white/45">KTA</span>
 									</p>
@@ -87,8 +89,8 @@ export default function WithdrawPage() {
 							<WithdrawCard username={user?.username ?? "user"} />
 							<Card>
 								<BadgeCheck className="text-accent" />
-								<h2 className="mt-4 text-lg font-bold">Verified withdrawal</h2>
-								<p className="mt-2 text-sm leading-6 text-white/52">Your Keeta SDK certificate state is attached to the withdrawal record.</p>
+								<h2 className="mt-4 text-lg font-bold">{t("verifiedTitle")}</h2>
+								<p className="mt-2 text-sm leading-6 text-white/52">{t("verifiedDescription")}</p>
 							</Card>
 						</div>
 					</>
