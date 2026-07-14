@@ -8,6 +8,7 @@ import { IdentityModule } from "../api/identity/identity.module";
 import { PaymentsModule } from "../api/payments/payments.module";
 import { UsersModule } from "../api/users/users.module";
 import { WalletsModule } from "../api/wallets/wallets.module";
+import { LuminaLocalizationModule } from "../integrations/lumina/lumina-localization.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { WalletsModule } from "../api/wallets/wallets.module";
     IdentityModule,
     PaymentsModule,
     FeedModule,
+    LuminaLocalizationModule,
   ],
 })
 export class AppModule {}

@@ -46,6 +46,8 @@ KEETA_NETWORK=test
 KEETA_DEMO_MODE=false
 PORT=4000
 FRONTEND_URL=http://localhost:3000
+LUMINA_BASE_URL=https://lumina-e3vi.onrender.com
+LUMINA_API_KEY=your_server_only_lumina_key
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
@@ -59,6 +61,10 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 ```
 
 Do not commit `.env` files. Keep wallet seeds and encryption keys private.
+
+`LUMINA_API_KEY` must stay in the NestJS backend. Use a Lumina consumer key
+scoped to `translate`; never expose the bootstrap administration key or place a
+Lumina key in `frontend/.env.local`.
 
 ## How To Run
 
