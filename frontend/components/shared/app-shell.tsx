@@ -3,22 +3,26 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
+import { useTranslations } from "next-intl";
 import { History, LayoutDashboard, Link2, LogOut, Settings } from "lucide-react";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-	{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-	{ href: "/requests", label: "Requests", icon: Link2 },
-	{ href: "/transactions", label: "History", icon: History },
-	{ href: "/settings", label: "Settings", icon: Settings },
-];
+	{ href: "/dashboard", label: "dashboard", icon: LayoutDashboard },
+	{ href: "/requests", label: "requests", icon: Link2 },
+	{ href: "/transactions", label: "history", icon: History },
+	{ href: "/settings", label: "settings", icon: Settings },
+] as const;
 
 export function AppShell({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
 	const router = useRouter();
 	const { ready, authenticated, logout } = usePrivy();
+	const t = useTranslations("navigation");
+	const session = useTranslations("session");
 
 	useEffect(() => {
 		if (ready && !authenticated) {
@@ -43,7 +47,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 						<span className="h-2 w-2 animate-bounce rounded-full bg-sky [animation-delay:120ms]" />
 						<span className="h-2 w-2 animate-bounce rounded-full bg-coral [animation-delay:240ms]" />
 					</div>
-					<p className="mt-5 text-sm text-white/50">{ready ? "Taking you back to sign in..." : "Restoring your secure session..."}</p>
+					<p className="mt-5 text-sm text-white/50">{ready ? session("returning") : session("restoring")}</p>
 				</div>
 			</main>
 		);
@@ -70,14 +74,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 								)}
 							>
 								<Icon size={18} />
-								{item.label}
+								{t(item.label)}
 							</Link>
 						);
 					})}
 				</nav>
-				<Button variant="secondary" className="mt-auto w-full" onClick={signOut}>
-					<LogOut size={17} /> Logout
-				</Button>
+				<div className="mt-auto space-y-3">
+					<LocaleSwitcher />
+					<Button variant="secondary" className="w-full" onClick={signOut}>
+						<LogOut size={17} /> {t("logout")}
+					</Button>
+				</div>
 			</aside>
 
 			<header className="sticky top-0 z-30 border-b border-white/10 bg-background/78 px-4 py-3 backdrop-blur-xl lg:hidden">
@@ -86,9 +93,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 						<span className="grid h-9 w-9 place-items-center rounded-[8px] bg-accent text-black">K</span>
 						KeetaPay
 					</Link>
-					<button className="rounded-[8px] border border-white/10 px-3 py-2 text-sm text-white/70" onClick={signOut}>
-						Logout
-					</button>
+					<div className="flex items-center gap-2">
+						<LocaleSwitcher compact />
+						<button className="rounded-[8px] border border-white/10 px-3 py-2 text-sm text-white/70" onClick={signOut}>
+							{t("logout")}
+						</button>
+					</div>
 				</div>
 			</header>
 
@@ -101,7 +111,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 					return (
 						<Link key={item.href} href={item.href} className={cn("flex flex-col items-center gap-1 rounded-[8px] px-2 py-2 text-xs font-semibold text-white/48", active && "bg-accent/15 text-accent")}>
 							<Icon size={19} />
-							{item.label}
+							{t(item.label)}
 						</Link>
 					);
 				})}

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import { Toaster } from "sonner";
 import { PaymentStatusModal } from "@/components/common/payment-status-modal";
 import { QueryProvider } from "@/components/common/query-provider";
@@ -10,21 +12,26 @@ export const metadata: Metadata = {
   description: "Send crypto like message. Instant, secure, and easy-to-use",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en" className="dark">
+    <html lang={locale} className="dark">
       <body>
-        <PrivyProviders>
-          <QueryProvider>
-            {children}
-            <PaymentStatusModal />
-            <Toaster richColors theme="dark" position="top-right" />
-          </QueryProvider>
-        </PrivyProviders>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <PrivyProviders>
+            <QueryProvider>
+              {children}
+              <PaymentStatusModal />
+              <Toaster richColors theme="dark" position="top-right" />
+            </QueryProvider>
+          </PrivyProviders>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
